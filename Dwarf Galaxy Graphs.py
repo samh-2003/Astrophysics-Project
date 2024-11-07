@@ -115,18 +115,80 @@ zz = adist*np.sin(glat*np.pi/180.)/1.e3
 Rgc = np.sqrt(xx**2. + yy**2. + zz**2.)
 
 #Graphs
+
+#work out which stars are from which dwarf galaxy by creating masks for each galaxy
+Carina = (field=='CARINA')
+Draco = (field=='DRACO')
+Fornax = (field=='FORNAX')
+Sculptor = (field=='SCULPTOR')
+Sextans = (field=='SEXTANS')
+Ursa_Minor = (field=='URMINOR')
+
+
 #Nitrogen Against Iron
 
 fig_size[0] = 10
 
-plt.scatter(feh, nfe, c='Black', alpha=0.75, s=30)
-plt.xlabel('FE', size=labs)
-plt.xticks(np.arange(-2.5, 0, step=0.5), fontsize=tcks)
-plt.ylabel('N', size=labs)
-plt.yticks(np.arange(-0.5, 2, step=0.5), fontsize=tcks)
-#plt.legend(loc='lower right')
+plt.scatter(nfe[Carina], feh[Carina], c='Black', alpha=0.75, s=30, label = 'Carina')
+plt.scatter(nfe[Draco], feh[Draco], c='Blue', alpha=0.75, s=30, label = 'Draco')
+plt.scatter(nfe[Fornax], feh[Fornax], c='Red', alpha=0.75, s=30, label = 'Fornax')
+plt.scatter(nfe[Sculptor], feh[Sculptor], c='Green', alpha=0.75, s=30, label = 'Sculptor')
+plt.scatter(nfe[Sextans], feh[Sextans], c='Pink', alpha=0.75, s=30, label = 'Sextans')
+plt.scatter(nfe[Ursa_Minor], feh[Ursa_Minor], c='Orange', alpha=0.75, s=30, label = 'Ursa Minor')
+plt.xlabel('N', size=labs)
+plt.xticks(np.arange(-0.5, 2, step=0.5), fontsize=tcks)
+plt.ylabel('Fe', size=labs)
+plt.yticks(np.arange(-2.5, 0, step=0.5), fontsize=tcks)
+plt.legend(loc='lower right')
 plt.show()
 
+#Nitrogen against Carbon
 
+fig_size[0] = 10
 
+plt.scatter(nfe[Carina], cfe[Carina], c='Black', alpha=0.75, s=30, label = 'Carina')
+plt.scatter(nfe[Draco], cfe[Draco], c='Blue', alpha=0.75, s=30, label = 'Draco')
+plt.scatter(nfe[Fornax], cfe[Fornax], c='Red', alpha=0.75, s=30, label = 'Fornax')
+plt.scatter(nfe[Sculptor], cfe[Sculptor], c='Green', alpha=0.75, s=30, label = 'Sculptor')
+plt.scatter(nfe[Sextans], cfe[Sextans], c='Pink', alpha=0.75, s=30, label = 'Sextans')
+plt.scatter(nfe[Ursa_Minor], cfe[Ursa_Minor], c='Orange', alpha=0.75, s=30, label = 'Ursa Minor')
+plt.xlabel('N', size=labs)
+plt.xticks(np.arange(-0.5, 2, step=0.5), fontsize=tcks)
+plt.ylabel('C', size=labs)
+plt.yticks(fontsize=tcks)
+plt.legend(loc='lower right')
+plt.show()
 
+#Aluminium against Iron
+
+fig_size[0] = 10
+
+plt.scatter(alfe[Carina], feh[Carina], c='Black', alpha=0.75, s=30, label = 'Carina')
+plt.scatter(alfe[Draco], feh[Draco], c='Blue', alpha=0.75, s=30, label = 'Draco')
+plt.scatter(alfe[Fornax], feh[Fornax], c='Red', alpha=0.75, s=30, label = 'Fornax')
+plt.scatter(alfe[Sculptor], feh[Sculptor], c='Green', alpha=0.75, s=30, label = 'Sculptor')
+plt.scatter(alfe[Sextans], feh[Sextans], c='Pink', alpha=0.75, s=30, label = 'Sextans')
+plt.scatter(alfe[Ursa_Minor], feh[Ursa_Minor], c='Orange', alpha=0.75, s=30, label = 'Ursa Minor')
+plt.xlabel('Al', size=labs)
+plt.xticks(fontsize=tcks)
+plt.ylabel('Fe', size=labs)
+plt.yticks(np.arange(-2.5, 0, step=0.5), fontsize=tcks)
+plt.legend(loc='lower right')
+plt.show()
+
+#Aluminium against Nitrogen
+
+fig_size[0] = 10
+
+plt.scatter(alfe[Carina], nfe[Carina], c='Black', alpha=0.75, s=30, label = 'Carina')
+plt.scatter(alfe[Draco], nfe[Draco], c='Blue', alpha=0.75, s=30, label = 'Draco')
+plt.scatter(alfe[Fornax], nfe[Fornax], c='Red', alpha=0.75, s=30, label = 'Fornax')
+plt.scatter(alfe[Sculptor], nfe[Sculptor], c='Green', alpha=0.75, s=30, label = 'Sculptor')
+plt.scatter(alfe[Sextans], nfe[Sextans], c='Pink', alpha=0.75, s=30, label = 'Sextans')
+plt.scatter(alfe[Ursa_Minor], nfe[Ursa_Minor], c='Orange', alpha=0.75, s=30, label = 'Ursa Minor')
+plt.xlabel('Al', size=labs)
+plt.xticks(fontsize=tcks)
+plt.ylabel('N', size=labs)
+plt.yticks(np.arange(-0.5, 2, step=0.5), fontsize=tcks)
+plt.legend(loc='lower right')
+plt.show()
