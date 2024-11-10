@@ -135,11 +135,12 @@ plt.scatter(nfe[Fornax], feh[Fornax], c='Red', alpha=0.75, s=30, label = 'Fornax
 plt.scatter(nfe[Sculptor], feh[Sculptor], c='Green', alpha=0.75, s=30, label = 'Sculptor')
 plt.scatter(nfe[Sextans], feh[Sextans], c='Pink', alpha=0.75, s=30, label = 'Sextans')
 plt.scatter(nfe[Ursa_Minor], feh[Ursa_Minor], c='Orange', alpha=0.75, s=30, label = 'Ursa Minor')
-plt.xlabel('N', size=labs)
+plt.xlabel('N/Fe', size=labs)
 plt.xticks(np.arange(-0.5, 2, step=0.5), fontsize=tcks)
-plt.ylabel('Fe', size=labs)
+plt.ylabel('Fe/H', size=labs)
 plt.yticks(np.arange(-2.5, 0, step=0.5), fontsize=tcks)
 plt.legend(loc='lower right')
+plt.savefig('Nitrogen against Iron')
 plt.show()
 
 #Nitrogen against Carbon
@@ -152,11 +153,12 @@ plt.scatter(nfe[Fornax], cfe[Fornax], c='Red', alpha=0.75, s=30, label = 'Fornax
 plt.scatter(nfe[Sculptor], cfe[Sculptor], c='Green', alpha=0.75, s=30, label = 'Sculptor')
 plt.scatter(nfe[Sextans], cfe[Sextans], c='Pink', alpha=0.75, s=30, label = 'Sextans')
 plt.scatter(nfe[Ursa_Minor], cfe[Ursa_Minor], c='Orange', alpha=0.75, s=30, label = 'Ursa Minor')
-plt.xlabel('N', size=labs)
+plt.xlabel('N/Fe', size=labs)
 plt.xticks(np.arange(-0.5, 2, step=0.5), fontsize=tcks)
-plt.ylabel('C', size=labs)
+plt.ylabel('C/Fe', size=labs)
 plt.yticks(fontsize=tcks)
 plt.legend(loc='lower right')
+plt.savefig('Nitrogen against Carbon')
 plt.show()
 
 #Aluminium against Iron
@@ -169,26 +171,29 @@ plt.scatter(alfe[Fornax], feh[Fornax], c='Red', alpha=0.75, s=30, label = 'Forna
 plt.scatter(alfe[Sculptor], feh[Sculptor], c='Green', alpha=0.75, s=30, label = 'Sculptor')
 plt.scatter(alfe[Sextans], feh[Sextans], c='Pink', alpha=0.75, s=30, label = 'Sextans')
 plt.scatter(alfe[Ursa_Minor], feh[Ursa_Minor], c='Orange', alpha=0.75, s=30, label = 'Ursa Minor')
-plt.xlabel('Al', size=labs)
+plt.xlabel('Al/Fe', size=labs)
 plt.xticks(fontsize=tcks)
-plt.ylabel('Fe', size=labs)
+plt.ylabel('Fe/H', size=labs)
 plt.yticks(np.arange(-2.5, 0, step=0.5), fontsize=tcks)
 plt.legend(loc='lower right')
+plt.savefig('Aluminium against Iron')
 plt.show()
 
-#Aluminium against Nitrogen
+
+#Magnesium against Aluminium
 
 fig_size[0] = 10
 
-plt.scatter(alfe[Carina], nfe[Carina], c='Black', alpha=0.75, s=30, label = 'Carina')
-plt.scatter(alfe[Draco], nfe[Draco], c='Blue', alpha=0.75, s=30, label = 'Draco')
-plt.scatter(alfe[Fornax], nfe[Fornax], c='Red', alpha=0.75, s=30, label = 'Fornax')
-plt.scatter(alfe[Sculptor], nfe[Sculptor], c='Green', alpha=0.75, s=30, label = 'Sculptor')
-plt.scatter(alfe[Sextans], nfe[Sextans], c='Pink', alpha=0.75, s=30, label = 'Sextans')
-plt.scatter(alfe[Ursa_Minor], nfe[Ursa_Minor], c='Orange', alpha=0.75, s=30, label = 'Ursa Minor')
-plt.xlabel('Al', size=labs)
-plt.xticks(fontsize=tcks)
-plt.ylabel('N', size=labs)
-plt.yticks(np.arange(-0.5, 2, step=0.5), fontsize=tcks)
+plt.scatter(mgfe[Carina], alfe[Carina], c='Black', alpha=0.75, s=30, label = 'Carina')
+plt.scatter(mgfe[Draco], alfe[Draco], c='Blue', alpha=0.75, s=30, label = 'Draco')
+plt.scatter(mgfe[Fornax], alfe[Fornax], c='Red', alpha=0.75, s=30, label = 'Fornax')
+plt.scatter(mgfe[Sculptor], alfe[Sculptor], c='Green', alpha=0.75, s=30, label = 'Sculptor')
+plt.scatter(mgfe[Sextans], alfe[Sextans], c='Pink', alpha=0.75, s=30, label = 'Sextans')
+plt.scatter(mgfe[Ursa_Minor], alfe[Ursa_Minor], c='Orange', alpha=0.75, s=30, label = 'Ursa Minor')
+plt.xlabel('Mg/Fe', size=labs)
+plt.xticks(np.arange(-0.5, 2, step=0.5), fontsize=tcks)
+plt.ylabel('Al/Fe', size=labs)
+plt.yticks(fontsize=tcks)
 plt.legend(loc='lower right')
+plt.savefig('Magnesium against Aluminium')
 plt.show()
