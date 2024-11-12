@@ -25,85 +25,20 @@ fig_size[0] = 20
 fig_size[1] = 20
 
 #Figure settings (font sizes of ticks and labels)
-labs=35
-tcks=30
+labs=40
+tcks=35
 
 #Reading the table of Dwarf Galaxy Objects
 a = fits.open('DwarfGalaxies.fits')
-id = a[1].data['APOGEE_ID_1']
-gid = a[1].data['GAIAEDR3_SOURCE_ID']
-ra = a[1].data['RA']
-dec = a[1].data['DEC']
 glon = a[1].data['GLON']
 glat = a[1].data['GLAT']
-vscat = a[1].data['VSCATTER']
-nvis = a[1].data['NVISITS']
-teff = a[1].data['TEFF']
-teff_e = a[1].data['TEFF_ERR']
-logg = a[1].data['LOGG']
-logg_e = a[1].data['LOGG_ERR']
-sn = a[1].data['SNR']
-rv = a[1].data['VHELIO_AVG']
 field = a[1].data['FIELD']
-
-jmag = a[1].data['J']
-hmag = a[1].data['H']
-kmag = a[1].data['K']
-
 feh = a[1].data['Fe_H']
 mgfe = a[1].data['Mg_Fe']
 cfe = a[1].data['C_Fe']
-ofe = a[1].data['O_Fe']
 nfe = a[1].data['N_Fe']
-cafe = a[1].data['Ca_Fe']
-sife = a[1].data['Si_Fe']
-nife = a[1].data['Ni_Fe']
 alfe = a[1].data['Al_Fe']
-tife = a[1].data['Ti_Fe']
-cofe = a[1].data['Co_Fe']
-sfe = a[1].data['S_Fe']
-kfe = a[1].data['K_Fe']
-pfe = a[1].data['P_Fe']
-cefe = a[1].data['Ce_Fe']
-vfe = a[1].data['V_Fe']
-crfe = a[1].data['Cr_Fe']
-nafe = a[1].data['Na_Fe']
-mnfe = a[1].data['Mn_Fe']
-cufe = a[1].data['Cu_Fe']
-alfe_err = a[1].data['Al_FE_ERR']
-aemg = a[1].data['MG_FE_ERR']
-aemn = a[1].data['MN_FE_ERR']
-mgmn = mgfe - mnfe
-simn = sife - mnfe
-mgmn_err = np.sqrt(aemg**2. + aemn)
-
-jmag = a[1].data['J']
-hmag = a[1].data['H']
-kmag = a[1].data['K']
-a_k = a[1].data['AK_TARG']
-a_j = 2.5*a_k
-#ai36 = a[1].data['IRAC_3_6']
-#ai45 = a[1].data['IRAC_4_5']
-#ai80 = a[1].data['IRAC_8_0']
-
 adist = a[1].data['weighted_dist']
-aedist = a[1].data['weighted_dist_error']
-dist = adist/1.e3
-dist_err = aedist/1.e3
-ecc = a[1].data['ecc']
-#ecc_err = a[1].data['e_err']
-zmax = a[1].data['zmax']
-#zmax_err = a[1].data['zmax_err']
-rperi = a[1].data['rperi']
-#rperi_err = a[1].data['rperi_err']
-jr = a[1].data['jr']/1.e2*8.*220
-#jr_err = a[1].data['jr_err']
-lz = a[1].data['Lz']/1.e2*8.*220
-#Lz_err = a[1].data['Lz_err']
-jz = a[1].data['jz']/1.e2*8.*220
-#jz_err = a[1].data['jz_err']
-ener = a[1].data['energy']/1.e5
-#ener_err = a[1].data['Energy_err']
 
 #Calculate Galactocentric distances X, Y, Z, and Rgc
 
@@ -113,6 +48,43 @@ xx = (xsun - adist*np.cos(glon*np.pi/180.)*np.cos(glat*np.pi/180.))/1.e3
 yy = adist*np.sin(glon*np.pi/180.)*np.cos(glat*np.pi/180.)/1.e3
 zz = adist*np.sin(glat*np.pi/180.)/1.e3
 Rgc = np.sqrt(xx**2. + yy**2. + zz**2.)
+
+#open large data set to become greyscale background
+
+b = fits.open('dr17_dr3_McMillan_astroNN_rev1.fits')
+hdu = b[1]
+agid = b[1].data['GAIAEDR3_SOURCE_ID']
+ateff = b[1].data['TEFF']
+alogg = b[1].data['LOGG']
+asn = b[1].data['SNR']
+afe = b[1].data['Fe_H']
+amg = b[1].data['Mg_Fe']
+ac = b[1].data['C_Fe']
+an = b[1].data['N_Fe']
+aal = b[1].data['Al_Fe']
+amn = b[1].data['Mn_Fe']
+asflag = b[1].data['STARFLAG']
+adist = b[1].data['weighted_dist']
+aedist = b[1].data['weighted_dist_error']
+aLz = b[1].data['Lz']
+aEnergy = b[1].data['energy']
+
+
+#find globular clusters that need to be subtracted
+
+gc = fits.open('GC_members_VAC-v1_1.fits')
+gcid = gc[1].data['GAIAEDR3_SOURCE_ID']
+
+gcid_mask = np.isin(agid,gcid,invert=True)
+
+#set mask for greyscale background
+
+mask_al = ( (asn >= 50) & (ateff > 3500) & (ateff < 5000) & \
+        (alogg < 3.6) & (alogg > -1) & ((aedist/adist)<0.20) & \
+        (gcid_mask==True) & (afe > -10) & (amg > -10) & (amn > -10) & \
+        (aEnergy < 0.0) & (aLz < 1.e4) & (aLz > -1.e4) & \
+        (asflag == 0) & (an < 10) & (an > -10) & (ac > -10) & \
+        (ac < 10) & (aal > -10) & (aal < 10))
 
 #Graphs
 
@@ -124,76 +96,90 @@ Sculptor = (field=='SCULPTOR')
 Sextans = (field=='SEXTANS')
 Ursa_Minor = (field=='URMINOR')
 
-
 #Nitrogen Against Iron
 
-fig_size[0] = 10
+fig_size[0] = 64
 
-plt.scatter(nfe[Carina], feh[Carina], c='Black', alpha=0.75, s=30, label = 'Carina')
-plt.scatter(nfe[Draco], feh[Draco], c='Blue', alpha=0.75, s=30, label = 'Draco')
-plt.scatter(nfe[Fornax], feh[Fornax], c='Red', alpha=0.75, s=30, label = 'Fornax')
-plt.scatter(nfe[Sculptor], feh[Sculptor], c='Green', alpha=0.75, s=30, label = 'Sculptor')
-plt.scatter(nfe[Sextans], feh[Sextans], c='Pink', alpha=0.75, s=30, label = 'Sextans')
-plt.scatter(nfe[Ursa_Minor], feh[Ursa_Minor], c='Orange', alpha=0.75, s=30, label = 'Ursa Minor')
-plt.xlabel('N/Fe', size=labs)
-plt.xticks(np.arange(-0.5, 2, step=0.5), fontsize=tcks)
-plt.ylabel('Fe/H', size=labs)
-plt.yticks(np.arange(-2.5, 0, step=0.5), fontsize=tcks)
-plt.legend(loc='lower right')
-plt.savefig('Nitrogen against Iron')
+plt.hist2d(afe[mask_al],an[mask_al],norm=mpl.colors.LogNorm(), bins=(200, 200),range=[[-3, 1],[-1, 2]], cmap='bone')
+cb = plt.colorbar()
+cb.ax.tick_params(labelsize=tcks)
+plt.scatter(feh[Carina], nfe[Carina], c='Aqua', alpha=0.9, s=75, label = 'Carina')
+plt.scatter(feh[Draco], nfe[Draco], c='Blue', alpha=0.9, s=75, label = 'Draco')
+plt.scatter(feh[Fornax], nfe[Fornax], c='Red', alpha=0.9, s=75, label = 'Fornax')
+plt.scatter(feh[Sculptor], nfe[Sculptor], c='Green', alpha=0.9, s=75, label = 'Sculptor')
+plt.scatter(feh[Sextans], nfe[Sextans], c='Fuchsia', alpha=0.9, s=75, label = 'Sextans')
+plt.scatter(feh[Ursa_Minor], nfe[Ursa_Minor], c='Orange', alpha=0.9, s=75, label = 'Ursa Minor')
+plt.ylabel('N/Fe', size=labs)
+plt.yticks(np.arange(-1, 2, step=1), fontsize=tcks)
+plt.xlabel('Fe/H', size=labs)
+plt.xticks(np.arange(-3, 1, step=1), fontsize=tcks)
+plt.gca().set_box_aspect(1)
+plt.legend(fontsize = 20, loc='lower right')
+plt.savefig('Nitrogen against Iron', bbox_inches='tight')
 plt.show()
 
 #Nitrogen against Carbon
 
-fig_size[0] = 10
+fig_size[0] = 64
 
-plt.scatter(nfe[Carina], cfe[Carina], c='Black', alpha=0.75, s=30, label = 'Carina')
-plt.scatter(nfe[Draco], cfe[Draco], c='Blue', alpha=0.75, s=30, label = 'Draco')
-plt.scatter(nfe[Fornax], cfe[Fornax], c='Red', alpha=0.75, s=30, label = 'Fornax')
-plt.scatter(nfe[Sculptor], cfe[Sculptor], c='Green', alpha=0.75, s=30, label = 'Sculptor')
-plt.scatter(nfe[Sextans], cfe[Sextans], c='Pink', alpha=0.75, s=30, label = 'Sextans')
-plt.scatter(nfe[Ursa_Minor], cfe[Ursa_Minor], c='Orange', alpha=0.75, s=30, label = 'Ursa Minor')
-plt.xlabel('N/Fe', size=labs)
-plt.xticks(np.arange(-0.5, 2, step=0.5), fontsize=tcks)
-plt.ylabel('C/Fe', size=labs)
-plt.yticks(fontsize=tcks)
-plt.legend(loc='lower right')
-plt.savefig('Nitrogen against Carbon')
+plt.hist2d(ac[mask_al],an[mask_al],norm=mpl.colors.LogNorm(), bins=(200, 200),range=[[-2, 1.25],[-0.75, 1.5]], cmap='bone')
+cb = plt.colorbar()
+cb.ax.tick_params(labelsize=tcks)
+plt.scatter(cfe[Carina], nfe[Carina], c='Aqua', alpha=0.9, s=75, label = 'Carina')
+plt.scatter(cfe[Draco], nfe[Draco], c='Blue', alpha=0.9, s=75, label = 'Draco')
+plt.scatter(cfe[Fornax], nfe[Fornax], c='Red', alpha=0.9, s=75, label = 'Fornax')
+plt.scatter(cfe[Sculptor], nfe[Sculptor], c='Green', alpha=0.9, s=75, label = 'Sculptor')
+plt.scatter(cfe[Sextans], nfe[Sextans], c='Fuchsia', alpha=0.9, s=75, label = 'Sextans')
+plt.scatter(cfe[Ursa_Minor], nfe[Ursa_Minor], c='Orange', alpha=0.9, s=75, label = 'Ursa Minor')
+plt.ylabel('N/Fe', size=labs)
+plt.yticks(np.arange(-0.75, 1.5, step=1), fontsize=tcks)
+plt.xlabel('C/Fe', size=labs)
+plt.xticks(np.arange(-2, 1.25, step=1), fontsize=tcks)
+plt.gca().set_box_aspect(1)
+plt.legend(fontsize = 20, loc='lower right')
+plt.savefig('Nitrogen against Carbon', bbox_inches='tight')
 plt.show()
 
 #Aluminium against Iron
 
-fig_size[0] = 10
+fig_size[0] = 64
 
-plt.scatter(alfe[Carina], feh[Carina], c='Black', alpha=0.75, s=30, label = 'Carina')
-plt.scatter(alfe[Draco], feh[Draco], c='Blue', alpha=0.75, s=30, label = 'Draco')
-plt.scatter(alfe[Fornax], feh[Fornax], c='Red', alpha=0.75, s=30, label = 'Fornax')
-plt.scatter(alfe[Sculptor], feh[Sculptor], c='Green', alpha=0.75, s=30, label = 'Sculptor')
-plt.scatter(alfe[Sextans], feh[Sextans], c='Pink', alpha=0.75, s=30, label = 'Sextans')
-plt.scatter(alfe[Ursa_Minor], feh[Ursa_Minor], c='Orange', alpha=0.75, s=30, label = 'Ursa Minor')
-plt.xlabel('Al/Fe', size=labs)
-plt.xticks(fontsize=tcks)
-plt.ylabel('Fe/H', size=labs)
-plt.yticks(np.arange(-2.5, 0, step=0.5), fontsize=tcks)
-plt.legend(loc='lower right')
-plt.savefig('Aluminium against Iron')
+plt.hist2d(afe[mask_al],aal[mask_al],norm=mpl.colors.LogNorm(), bins=(200, 200),range=[[-2.5, 1],[-1.5, 1]], cmap='bone')
+cb = plt.colorbar()
+cb.ax.tick_params(labelsize=tcks)
+plt.scatter(feh[Carina], alfe[Carina], c='Aqua', alpha=0.9, s=75, label = 'Carina')
+plt.scatter(feh[Draco], alfe[Draco], c='Blue', alpha=0.9, s=75, label = 'Draco')
+plt.scatter(feh[Fornax], alfe[Fornax], c='Red', alpha=0.9, s=75, label = 'Fornax')
+plt.scatter(feh[Sculptor], alfe[Sculptor], c='Green', alpha=0.9, s=75, label = 'Sculptor')
+plt.scatter(feh[Sextans], alfe[Sextans], c='Fuchsia', alpha=0.9, s=75, label = 'Sextans')
+plt.scatter(feh[Ursa_Minor], alfe[Ursa_Minor], c='Orange', alpha=0.9, s=75, label = 'Ursa Minor')
+plt.ylabel('Al/Fe', size=labs)
+plt.yticks(np.arange(-1.5, 1, step=1), fontsize=tcks)
+plt.xlabel('Fe/H', size=labs)
+plt.xticks(np.arange(-2.5, 1, step=1), fontsize=tcks)
+plt.gca().set_box_aspect(1)
+plt.legend(fontsize = 20, loc='lower right')
+plt.savefig('Aluminium against Iron', bbox_inches='tight')
 plt.show()
-
 
 #Magnesium against Aluminium
 
-fig_size[0] = 10
+fig_size[0] = 64
 
-plt.scatter(mgfe[Carina], alfe[Carina], c='Black', alpha=0.75, s=30, label = 'Carina')
-plt.scatter(mgfe[Draco], alfe[Draco], c='Blue', alpha=0.75, s=30, label = 'Draco')
-plt.scatter(mgfe[Fornax], alfe[Fornax], c='Red', alpha=0.75, s=30, label = 'Fornax')
-plt.scatter(mgfe[Sculptor], alfe[Sculptor], c='Green', alpha=0.75, s=30, label = 'Sculptor')
-plt.scatter(mgfe[Sextans], alfe[Sextans], c='Pink', alpha=0.75, s=30, label = 'Sextans')
-plt.scatter(mgfe[Ursa_Minor], alfe[Ursa_Minor], c='Orange', alpha=0.75, s=30, label = 'Ursa Minor')
+plt.hist2d(amg[mask_al],aal[mask_al],norm=mpl.colors.LogNorm(), bins=(200, 200),range=[[-0.75, 0.75],[-1.5, 1.5]], cmap='bone')
+cb = plt.colorbar()
+cb.ax.tick_params(labelsize=tcks)
+plt.scatter(mgfe[Carina], alfe[Carina], c='Aqua', alpha=0.9, s=75, label = 'Carina')
+plt.scatter(mgfe[Draco], alfe[Draco], c='Blue', alpha=0.9, s=75, label = 'Draco')
+plt.scatter(mgfe[Fornax], alfe[Fornax], c='Red', alpha=0.9, s=75, label = 'Fornax')
+plt.scatter(mgfe[Sculptor], alfe[Sculptor], c='Green', alpha=0.9, s=75, label = 'Sculptor')
+plt.scatter(mgfe[Sextans], alfe[Sextans], c='Fuchsia', alpha=0.9, s=75, label = 'Sextans')
+plt.scatter(mgfe[Ursa_Minor], alfe[Ursa_Minor], c='Orange', alpha=0.9, s=75, label = 'Ursa Minor')
 plt.xlabel('Mg/Fe', size=labs)
-plt.xticks(np.arange(-0.5, 2, step=0.5), fontsize=tcks)
+plt.xticks(np.arange(-0.75, 0.75, step=1), fontsize=tcks)
 plt.ylabel('Al/Fe', size=labs)
-plt.yticks(fontsize=tcks)
-plt.legend(loc='lower right')
-plt.savefig('Magnesium against Aluminium')
+plt.yticks(np.arange(-1.5, 1.5, step=1), fontsize=tcks)
+plt.gca().set_box_aspect(1)
+plt.legend(fontsize = 20, loc='lower right')
+plt.savefig('Magnesium against Aluminium', bbox_inches='tight')
 plt.show()
