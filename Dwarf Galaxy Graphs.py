@@ -81,10 +81,10 @@ gcid_mask = np.isin(agid,gcid,invert=True)
 
 mask_al = ( (asn >= 50) & (ateff > 3500) & (ateff < 5000) & \
         (alogg < 3.6) & (alogg > -1) & ((aedist/adist)<0.20) & \
-        (gcid_mask==True) & (afe > -10) & (amg > -10) & (amn > -10) & \
-        (aEnergy < 0.0) & (aLz < 1.e4) & (aLz > -1.e4) & \
-        (asflag == 0) & (an < 10) & (an > -10) & (ac > -10) & \
-        (ac < 10) & (aal > -10) & (aal < 10))
+        (gcid_mask==True) & (afe > -10) & (amg > -10) & \
+        (amn > -10) & (aEnergy < 0.0) & (aLz < 1.e4) & \
+        (aLz > -1.e4) & (asflag == 0) & (an < 10) & (an > -10) & \
+        (ac > -10) & (ac < 10) & (aal > -10) & (aal < 10))
 
 #Graphs
 
@@ -109,9 +109,9 @@ plt.scatter(feh[Fornax], nfe[Fornax], c='Red', alpha=0.9, s=75, label = 'Fornax'
 plt.scatter(feh[Sculptor], nfe[Sculptor], c='Green', alpha=0.9, s=75, label = 'Sculptor')
 plt.scatter(feh[Sextans], nfe[Sextans], c='Fuchsia', alpha=0.9, s=75, label = 'Sextans')
 plt.scatter(feh[Ursa_Minor], nfe[Ursa_Minor], c='Orange', alpha=0.9, s=75, label = 'Ursa Minor')
-plt.ylabel('N/Fe', size=labs)
+plt.ylabel('[N/Fe]', size=labs)
 plt.yticks(np.arange(-1, 2, step=1), fontsize=tcks)
-plt.xlabel('Fe/H', size=labs)
+plt.xlabel('[Fe/H]', size=labs)
 plt.xticks(np.arange(-3, 1, step=1), fontsize=tcks)
 plt.gca().set_box_aspect(1)
 plt.legend(fontsize = 20, loc='lower right')
@@ -131,9 +131,9 @@ plt.scatter(cfe[Fornax], nfe[Fornax], c='Red', alpha=0.9, s=75, label = 'Fornax'
 plt.scatter(cfe[Sculptor], nfe[Sculptor], c='Green', alpha=0.9, s=75, label = 'Sculptor')
 plt.scatter(cfe[Sextans], nfe[Sextans], c='Fuchsia', alpha=0.9, s=75, label = 'Sextans')
 plt.scatter(cfe[Ursa_Minor], nfe[Ursa_Minor], c='Orange', alpha=0.9, s=75, label = 'Ursa Minor')
-plt.ylabel('N/Fe', size=labs)
+plt.ylabel('[N/Fe]', size=labs)
 plt.yticks(np.arange(-0.75, 1.5, step=1), fontsize=tcks)
-plt.xlabel('C/Fe', size=labs)
+plt.xlabel('[C/Fe]', size=labs)
 plt.xticks(np.arange(-2, 1.25, step=1), fontsize=tcks)
 plt.gca().set_box_aspect(1)
 plt.legend(fontsize = 20, loc='lower right')
@@ -153,9 +153,9 @@ plt.scatter(feh[Fornax], alfe[Fornax], c='Red', alpha=0.9, s=75, label = 'Fornax
 plt.scatter(feh[Sculptor], alfe[Sculptor], c='Green', alpha=0.9, s=75, label = 'Sculptor')
 plt.scatter(feh[Sextans], alfe[Sextans], c='Fuchsia', alpha=0.9, s=75, label = 'Sextans')
 plt.scatter(feh[Ursa_Minor], alfe[Ursa_Minor], c='Orange', alpha=0.9, s=75, label = 'Ursa Minor')
-plt.ylabel('Al/Fe', size=labs)
+plt.ylabel('[Al/Fe]', size=labs)
 plt.yticks(np.arange(-1.5, 1, step=1), fontsize=tcks)
-plt.xlabel('Fe/H', size=labs)
+plt.xlabel('[Fe/H]', size=labs)
 plt.xticks(np.arange(-2.5, 1, step=1), fontsize=tcks)
 plt.gca().set_box_aspect(1)
 plt.legend(fontsize = 20, loc='lower right')
@@ -175,9 +175,9 @@ plt.scatter(mgfe[Fornax], alfe[Fornax], c='Red', alpha=0.9, s=75, label = 'Forna
 plt.scatter(mgfe[Sculptor], alfe[Sculptor], c='Green', alpha=0.9, s=75, label = 'Sculptor')
 plt.scatter(mgfe[Sextans], alfe[Sextans], c='Fuchsia', alpha=0.9, s=75, label = 'Sextans')
 plt.scatter(mgfe[Ursa_Minor], alfe[Ursa_Minor], c='Orange', alpha=0.9, s=75, label = 'Ursa Minor')
-plt.xlabel('Mg/Fe', size=labs)
+plt.xlabel('[Mg/Fe]', size=labs)
 plt.xticks(np.arange(-0.75, 0.75, step=1), fontsize=tcks)
-plt.ylabel('Al/Fe', size=labs)
+plt.ylabel('[Al/Fe]', size=labs)
 plt.yticks(np.arange(-1.5, 1.5, step=1), fontsize=tcks)
 plt.gca().set_box_aspect(1)
 plt.legend(fontsize = 20, loc='lower right')
