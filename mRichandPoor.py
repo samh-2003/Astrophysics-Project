@@ -23,11 +23,142 @@ from pandas import DataFrame
 fmin = -10
 fmax = -2.2
 
+#Import GC VAC file
+g = fits.open('GC_members_VAC-v1_1.fits')
+
+gc_name = g[1].data['GC_NAME']
+gc_id = g[1].data['APOGEE_ID']
+gc_tid = g[1].data['TARGET_ID']
+gc_gid = g[1].data['GAIAEDR3_SOURCE_ID']
+gc_ra = g[1].data['RA']
+gc_dec = g[1].data['DEC']
+gc_glon = g[1].data['GLON']
+gc_glat = g[1].data['GLAT']
+gc_vscat = g[1].data['VSCATTER']
+gc_nvis = g[1].data['NVISITS']
+gc_teff = g[1].data['TEFF']
+gc_teff_e = g[1].data['TEFF_ERR']
+gc_logg = g[1].data['LOGG']
+gc_logg_e = g[1].data['LOGG_ERR']
+gc_sn = g[1].data['SNR']
+gc_rv = g[1].data['VHELIO_AVG']
+
+
+gc_feh = g[1].data['Fe_H']
+gc_mgfe = g[1].data['Mg_Fe']
+gc_cfe = g[1].data['C_Fe']
+gc_cife = g[1].data['CI_Fe']
+gc_ofe = g[1].data['O_Fe']
+gc_nfe = g[1].data['N_Fe']
+gc_cafe = g[1].data['Ca_Fe']
+gc_sife = g[1].data['Si_Fe']
+gc_nife = g[1].data['Ni_Fe']
+gc_alfe = g[1].data['Al_Fe']
+gc_tife = g[1].data['Ti_Fe']
+gc_cofe = g[1].data['Co_Fe']
+gc_sfe = g[1].data['S_Fe']
+gc_kfe = g[1].data['K_Fe']
+gc_pfe = g[1].data['P_Fe']
+gc_cefe = g[1].data['Ce_Fe']
+gc_vfe = g[1].data['V_Fe']
+gc_crfe = g[1].data['Cr_Fe']
+gc_nafe = g[1].data['Na_Fe']
+gc_mnfe = g[1].data['Mn_Fe']
+gc_cufe = g[1].data['Cu_Fe']
+gc_sflag = g[1].data['STARFLAG']
+gc_aflag = g[1].data['ASPCAPFLAG']
+gc_saflag = g[1].data['ASPCAPFLAGS']
+gc_ealfe = g[1].data['Al_FE_ERR']
+gc_emgfe = g[1].data['MG_FE_ERR']
+gc_emnfe = g[1].data['MN_FE_ERR']
+gc_enfe = g[1].data['N_FE_ERR']
+gc_enife = g[1].data['NI_FE_ERR']
+gc_esife = g[1].data['SI_FE_ERR']
+gc_ecfe = g[1].data['C_FE_ERR']
+
+#subtract duplicates using pandas
+
+glisttup=list(zip(gc_id, gc_tid, gc_gid, gc_ra, gc_dec, gc_glon, gc_glat, gc_vscat, gc_nvis, \
+            gc_teff, gc_teff_e, gc_logg, gc_logg_e, gc_sn, gc_rv, gc_feh, gc_mgfe, \
+            gc_cfe, gc_cife, gc_ofe, gc_nfe, gc_cafe, gc_sife, gc_nife, gc_alfe, gc_tife, \
+            gc_cofe, gc_sfe, gc_kfe, gc_pfe, gc_cefe, gc_vfe, gc_crfe, gc_nafe, gc_mnfe, \
+            gc_cufe, gc_sflag, gc_aflag, gc_ecfe, gc_enfe, gc_enife, gc_esife, gc_emnfe, \
+            gc_emgfe, gc_ealfe, gc_name, gc_saflag))
+
+g_df=pd.DataFrame(glisttup, \
+        columns=['gc_id', 'gc_tid', 'gc_gid', 'gc_ra', 'gc_dec', 'gc_glon', 'gc_glat', \
+        'gc_vscat', 'gc_nvis', 'gc_teff', 'gc_teff_e', 'gc_logg', 'gc_logg_e', \
+		'gc_sn', 'gc_rv', 'gc_feh', 'gc_mgfe', 'gc_cfe', 'gc_cife', 'gc_ofe', 'gc_nfe', \
+        'gc_cafe', 'gc_sife', 'gc_nife', 'gc_alfe', 'gc_tife', 'gc_cofe', 'gc_sfe', 'gc_kfe', \
+        'gc_pfe', 'gc_cefe', 'gc_vfe', 'gc_crfe', 'gc_nafe', 'gc_mnfe', 'gc_cufe', 'gc_sflag', \
+		'gc_aflag', 'gc_ecfe', 'gc_enfe', 'gc_enife', 'gc_esife', 'gc_emnfe', 'gc_emgfe', \
+        'gc_ealfe', 'gc_name', 'gc_saflag'])
+
+#remove duplicates, keeping the records with the highest SNR value
+print('Number of stars before removing duplicates: '+str(len(g_df)))
+g_df=g_df.sort_values(by=['gc_id','gc_sn'],ascending=False)
+g_df=g_df[~g_df['gc_id'].duplicated(keep='first')]
+print('Number of stars after removing duplicates: '+str(len(g_df)))
+
+g_df=g_df.reset_index(drop=True)
+
+#convert back to numpy
+gc_name = g_df['gc_name'].to_numpy()
+gc_id = g_df['gc_id'].to_numpy()
+gc_ra = g_df['gc_ra'].to_numpy()
+gc_dec = g_df['gc_dec'].to_numpy()
+gc_glon = g_df['gc_glon'].to_numpy()
+gc_glat = g_df['gc_glat'].to_numpy()
+gc_vscat = g_df['gc_vscat'].to_numpy()
+gc_nvis = g_df['gc_nvis'].to_numpy()
+gc_teff = g_df['gc_teff'].to_numpy()
+gc_logg = g_df['gc_logg'].to_numpy()
+gc_sn = g_df['gc_sn'].to_numpy()
+gc_rv = g_df['gc_rv'].to_numpy()
+gc_feh = g_df['gc_feh'].to_numpy()
+gc_mgfe = g_df['gc_mgfe'].to_numpy()
+gc_cfe = g_df['gc_cfe'].to_numpy()
+gc_cife = g_df['gc_cife'].to_numpy()
+gc_ofe = g_df['gc_ofe'].to_numpy()
+gc_nfe = g_df['gc_nfe'].to_numpy()
+gc_cafe = g_df['gc_cafe'].to_numpy()
+gc_sife = g_df['gc_sife'].to_numpy()
+gc_nife = g_df['gc_nife'].to_numpy()
+gc_alfe = g_df['gc_alfe'].to_numpy()
+gc_tife = g_df['gc_tife'].to_numpy()
+gc_cofe = g_df['gc_cofe'].to_numpy()
+gc_sfe = g_df['gc_sfe'].to_numpy()
+gc_kfe = g_df['gc_kfe'].to_numpy()
+gc_pfe = g_df['gc_pfe'].to_numpy()
+gc_cefe = g_df['gc_cefe'].to_numpy()
+gc_vfe = g_df['gc_vfe'].to_numpy()
+gc_crfe = g_df['gc_crfe'].to_numpy()
+gc_nafe = g_df['gc_nafe'].to_numpy()
+gc_mnfe = g_df['gc_mnfe'].to_numpy()
+gc_cufe = g_df['gc_cufe'].to_numpy()
+gc_sflag = g_df['gc_sflag'].to_numpy()
+gc_aflag = g_df['gc_aflag'].to_numpy()
+gc_saflag = g_df['gc_saflag'].to_numpy()
+
+gc_ecfe = g_df['gc_ecfe'].to_numpy()  
+gc_enfe = g_df['gc_enfe'].to_numpy()
+gc_enife = g_df['gc_enife'].to_numpy()
+gc_esife = g_df['gc_esife'].to_numpy()
+gc_emnfe = g_df['gc_emnfe'].to_numpy()  
+gc_emgfe = g_df['gc_emgfe'].to_numpy()  
+gc_ealfe = g_df['gc_ealfe'].to_numpy()
+
+
+#Identify and remove NaN's
+mask_nan = (np.isfinite(gc_alfe) & np.isfinite(gc_feh) & np.isfinite(gc_nfe) \
+            & np.isfinite(gc_cfe) & np.isfinite(gc_mgfe))
+
         
 #Define dwarf galaxies working sample
 DG = fits.open('DwarfGalaxies.fits')
 
 ids_al = DG[1].data['APOGEE_ID_1']
+afield_al = DG[1].data['FIELD']
 teff_al = DG[1].data['TEFF']
 logg_al = DG[1].data['LOGG']
 mgfe_al = DG[1].data['Mg_Fe']
@@ -86,9 +217,9 @@ gs.update(wspace=0.2, hspace=1) # set the spacing between axes.
 met = ( (feh_al>fmin) & (feh_al < fmax) & (teff_al< 5000) )
 
 plt.subplot(gs[0])
-plt.scatter(cfe_al[met],nfe_al[met],c='gray',s=30)
-plt.scatter(cfe_al[met&G2],nfe_al[met&G2],c='r',s=50)
-plt.scatter(cfe_al[met&G3],nfe_al[met&G3],c='blue',s=50)
+plt.scatter(cfe_al[met&mask_nan],nfe_al[met&mask_nan],c='gray',s=30)
+plt.scatter(cfe_al[met&G2&mask_nan],nfe_al[met&G2&mask_nan],c='r',s=50)
+plt.scatter(cfe_al[met&G3&mask_nan],nfe_al[met&G3&mask_nan],c='blue',s=50)
 #plt.scatter(ct,nt,c='k',alpha=1,s=15)
 #plt.scatter(ct[G2],nt[G2],c='r',alpha=1,s=50)
 plt.xticks((np.arange(-4,4,step=0.5)),fontsize=tcks)
@@ -104,17 +235,19 @@ plt.tick_params(direction='in',right=True,top=True,length=10)
 #x = np.arange(-1.5,1,0.1)
 #plt.plot(x,a_n*x+b_n, c='blue')
 
+#########MAKE A PLOT OF THE GC VAC'S SO CAN COMPARE THE FOUND G2 TO THE KNOWNS#
+
 
 
 ax = plt.subplot(gs[1])
 ax.yaxis.set_label_position("right")
 ax.yaxis.tick_right()
 ax.yaxis.set_ticks_position("both")
-plt.scatter(mgfe_al[met],alfe_al[met],c='gray',s=30)
-plt.scatter(mgfe_al[met&G2],alfe_al[met&G2],c='r',s=50)
-plt.scatter(mgfe_al[met&G3],alfe_al[met&G3],c='blue',s=50)
-#plt.scatter(mgt,alt,c='k',alpha=1,s=15)
-#plt.scatter(mgt[G2],alt[G2],c='r',alpha=1,s=25)
+plt.scatter(mgfe_al[met&mask_nan],alfe_al[met],c='green',s=40)
+plt.scatter(mgfe_al[met&G2&mask_nan],alfe_al[met&G2&mask_nan],c='r',s=60)
+plt.scatter(mgfe_al[met&G3&mask_nan],alfe_al[met&G3&mask_nan],c='blue',s=60)
+plt.scatter(gc_cfe[G2],gc_nfe[G2],c='gray',alpha=1,s=20)
+plt.scatter(gc_cfe,gc_nfe,c='k',alpha=1,s=15)
 plt.xticks((np.arange(-4,4,step=0.2)),fontsize=tcks)
 plt.yticks((np.arange(-4,4,step=0.5)),fontsize=tcks)
 plt.ylabel('[Al/Fe]',size=labs,labelpad=25)
@@ -126,7 +259,8 @@ plt.tick_params(direction='in',right=True,top=True,length=10,labelright=True,lab
 #x = np.arange(-1.5,1,0.1)
 #plt.plot(x,a_al*x+b_al, c='blue')
 
-
+print(afield_al[met&G2])
+#print(afield_al[met])
 
 
 #plt.savefig('train_'+ pt_name[ind] + '.png',format='png',dpi=300,bbox_inches='tight')
