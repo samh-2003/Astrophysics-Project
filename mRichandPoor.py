@@ -17,15 +17,11 @@ from scipy import stats
 import pandas as pd 
 from pandas import DataFrame
 
-#[Fe/H] < -2.2
+####[Fe/H] < -2.2
 
-#define metallicity interval
-fmin = -10
-fmax = -2.2
 
 #Import GC VAC file
 g = fits.open('GC_members_VAC-v1_1.fits')
-
 gc_name = g[1].data['GC_NAME']
 gc_id = g[1].data['APOGEE_ID']
 gc_tid = g[1].data['TARGET_ID']
@@ -152,7 +148,8 @@ gc_ealfe = g_df['gc_ealfe'].to_numpy()
 #Identify and remove NaN's
 mask_nan = (np.isfinite(gc_alfe) & np.isfinite(gc_feh) & np.isfinite(gc_nfe) \
             & np.isfinite(gc_cfe) & np.isfinite(gc_mgfe))
-
+mask_g = ( (gc_sn >= 50) & (gc_teff > 3500) & (gc_teff < 5000) & \
+        (gc_logg < 3.6) & (gc_logg > -1) )
         
 #Define dwarf galaxies working sample
 DG = fits.open('DwarfGalaxies.fits')
@@ -206,6 +203,7 @@ tcks=30
 #Definition of G2 stars 
 lim=0.1
 G2 = (alfe_al > lim) 
+gc_G2 = (gc_alfe > lim) 
 
 # These are stars with very high N abundances, absent from GC sample
 # Likely debris from w Cen
@@ -214,28 +212,31 @@ G3 = nfe_al > 1.5
 gs = gridspec.GridSpec(1,2)
 gs.update(wspace=0.2, hspace=1) # set the spacing between axes. 
 
+#define metallicity interval
+fmin = -10
+fmax = -2.2
+
+#Define metallicity ranges
 met = ( (feh_al>fmin) & (feh_al < fmax) & (teff_al< 5000) )
+gc_met = ( (gc_feh>fmin) & (gc_feh < fmax) & (gc_teff < 5000) )
 
 plt.subplot(gs[0])
-plt.scatter(cfe_al[met&mask_nan],nfe_al[met&mask_nan],c='gray',s=30)
-plt.scatter(cfe_al[met&G2&mask_nan],nfe_al[met&G2&mask_nan],c='r',s=50)
-plt.scatter(cfe_al[met&G3&mask_nan],nfe_al[met&G3&mask_nan],c='blue',s=50)
-#plt.scatter(ct,nt,c='k',alpha=1,s=15)
-#plt.scatter(ct[G2],nt[G2],c='r',alpha=1,s=50)
-plt.xticks((np.arange(-4,4,step=0.5)),fontsize=tcks)
-plt.yticks((np.arange(-4,4,step=0.5)),fontsize=tcks)
+plt.scatter(gc_cfe[gc_met&mask_nan&mask_g],gc_nfe[gc_met&mask_nan&mask_g],c='k',s=30, label = 'GC VAC')
+plt.scatter(cfe_al[met&G2],nfe_al[met&G2],c='g',s=60, label = 'Dwarf Galaxy G2')
+#plt.scatter(cfe_al[met&G3],nfe_al[met&G3],c='blue',s=60)
+plt.scatter(gc_cfe[gc_met&mask_nan&mask_g&gc_G2],gc_nfe[gc_met&mask_nan&mask_g&gc_G2],c='r',alpha=1,s=60, label = 'GC VAC G2', marker = 'x')
+#plt.scatter(gc_cfe,gc_nfe,c='k',alpha=1,s=15)
+plt.xticks((np.arange(-1.5,1.5,step=0.5)),fontsize=tcks)
+plt.yticks((np.arange(-1,2.5,step=0.5)),fontsize=tcks)
 plt.ylabel('[N/Fe]',size=labs,labelpad=25)
 plt.xlabel('[C/Fe]',size=labs,labelpad=25)
 plt.xlim(-1.5,0.8)
 plt.ylim(-0.8,2.3)
-plt.text(-1.2,-0.5,'Intermediate [Fe/H]',fontsize=25)
+plt.gca().set_box_aspect(1)
+#plt.text(-1.2,-0.65,'Intermediate [Fe/H]',fontsize=25)
+plt.legend(fontsize = 15, loc='upper right')
 plt.tick_params(direction='in',right=True,top=True,length=10)
 
-#plt.plot([-2,2],[lim,lim])
-#x = np.arange(-1.5,1,0.1)
-#plt.plot(x,a_n*x+b_n, c='blue')
-
-#########MAKE A PLOT OF THE GC VAC'S SO CAN COMPARE THE FOUND G2 TO THE KNOWNS#
 
 
 
@@ -243,21 +244,23 @@ ax = plt.subplot(gs[1])
 ax.yaxis.set_label_position("right")
 ax.yaxis.tick_right()
 ax.yaxis.set_ticks_position("both")
-plt.scatter(mgfe_al[met&mask_nan],alfe_al[met],c='green',s=40)
-plt.scatter(mgfe_al[met&G2&mask_nan],alfe_al[met&G2&mask_nan],c='r',s=60)
-plt.scatter(mgfe_al[met&G3&mask_nan],alfe_al[met&G3&mask_nan],c='blue',s=60)
-plt.scatter(gc_cfe[G2],gc_nfe[G2],c='gray',alpha=1,s=20)
-plt.scatter(gc_cfe,gc_nfe,c='k',alpha=1,s=15)
+plt.scatter(gc_mgfe[gc_met&mask_nan&mask_g],gc_alfe[gc_met&mask_nan&mask_g],c='k',s=30, label = 'GC VAC')
+plt.scatter(mgfe_al[met&G2],alfe_al[met&G2],c='g',s=60, label = 'Dwarf Galaxy G2')
+#plt.scatter(mgfe_al[met&G3],alfe_al[met&G3],c='blue',s=60)
+plt.scatter(gc_mgfe[gc_met&mask_nan&mask_g&gc_G2],gc_alfe[gc_met&mask_nan&mask_g&gc_G2],c='r',alpha=1,s=60, label = 'GC VAC G2', marker = 'x')
+#plt.scatter(gc_mgfe,gc_alfe,c='k',alpha=1,s=15)
 plt.xticks((np.arange(-4,4,step=0.2)),fontsize=tcks)
 plt.yticks((np.arange(-4,4,step=0.5)),fontsize=tcks)
 plt.ylabel('[Al/Fe]',size=labs,labelpad=25)
 plt.xlabel('[Mg/Fe]',size=labs,labelpad=25)
 plt.xlim(-0.5,0.7)
 plt.ylim(-1.0,2.0)
+plt.gca().set_box_aspect(1)
+plt.legend(fontsize = 15, loc='upper right')
 plt.tick_params(direction='in',right=True,top=True,length=10,labelright=True,labelleft=False)
-#plt.plot([-2,2],[lim,lim])
-#x = np.arange(-1.5,1,0.1)
-#plt.plot(x,a_al*x+b_al, c='blue')
+
+plt.plot([-0.6, 1],[0.18, 0.01], c='blue')
+
 
 print(afield_al[met&G2])
 #print(afield_al[met])
