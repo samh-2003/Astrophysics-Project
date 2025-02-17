@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Feb 17 13:30:21 2025
+Created on Mon Feb 17 16:16:49 2025
 
-@author: Sam
+@author: samhe
 """
 
-#### -1.9 < [Fe/H] < -1.6
+#### -0.7 < [Fe/H] < 0
 
 
 #import relevant modules
@@ -202,24 +202,25 @@ labs=35
 tcks=30
 
 #Definition of G2 stars 
-a_n = -0.5
-b_n = 0.45
+a_n =-0
+b_n = 0.5
 
 lim_n = a_n*cfe_al + b_n
 
-G2 = (nfe_al > lim_n) 
+G2 = (nfe_al > lim_n)  
 
 lim_n = a_n*gc_cfe + b_n
 
-gc_G2 = (gc_nfe > lim_n)  
+gc_G2 = (gc_nfe > lim_n) 
+
 
 
 gs = gridspec.GridSpec(2,2)
 gs.update(wspace=0.2, hspace=0.2) # set the spacing between axes. 
 
 #define metallicity interval
-fmin = -1.9
-fmax = -1.6
+fmin = -0.7
+fmax = 0
 
 #Define metallicity ranges
 met = ( (feh_al>fmin) & (feh_al < fmax) & (teff_al< 5000) )
@@ -229,8 +230,8 @@ plt.subplot(gs[0])
 plt.scatter(gc_cfe[gc_met&mask_nan&mask_g],gc_nfe[gc_met&mask_nan&mask_g],c='k',s=30,alpha=0.7, label = 'GC VAC')
 #plt.scatter(cfe_al[met&G3],nfe_al[met&G3],c='blue',s=60)
 plt.scatter(gc_cfe[gc_met&mask_nan&mask_g&gc_G2],gc_nfe[gc_met&mask_nan&mask_g&gc_G2],c='r',alpha=0.7,s=60, label = 'GC VAC G2', marker = 'x')
-#plt.scatter(gc_cfe,gc_nfe,c='k',alpha=1,s=15)
 plt.scatter(cfe_al[met&G2],nfe_al[met&G2],c='g',s=60, label = 'Dwarf Galaxy G2')
+#plt.scatter(gc_cfe,gc_nfe,c='k',alpha=1,s=15)
 plt.xticks((np.arange(-1.5,1.5,step=0.5)),fontsize=tcks)
 plt.yticks((np.arange(-1,2.5,step=0.5)),fontsize=tcks)
 plt.ylabel('[N/Fe]',size=labs,labelpad=25)
@@ -263,6 +264,8 @@ plt.ylim(-1.0,2.0)
 plt.gca().set_box_aspect(1)
 plt.legend(fontsize = 15, loc='upper right')
 plt.tick_params(direction='in',right=True,top=True,length=10,labelright=True,labelleft=False)
+
+
 
 
 plt.subplot(gs[2])

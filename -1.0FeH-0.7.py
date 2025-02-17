@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Feb 17 13:30:21 2025
+Created on Mon Feb 17 16:16:47 2025
 
-@author: Sam
+@author: samhe
 """
 
-#### -1.9 < [Fe/H] < -1.6
+#### -1.0 < [Fe/H] < -0.7
 
 
 #import relevant modules
@@ -202,24 +202,25 @@ labs=35
 tcks=30
 
 #Definition of G2 stars 
-a_n = -0.5
+a_n = 0
 b_n = 0.45
 
 lim_n = a_n*cfe_al + b_n
 
-G2 = (nfe_al > lim_n) 
+G2 = (nfe_al > lim_n)  
 
 lim_n = a_n*gc_cfe + b_n
 
-gc_G2 = (gc_nfe > lim_n)  
+gc_G2 = (gc_nfe > lim_n) 
+ 
 
 
 gs = gridspec.GridSpec(2,2)
 gs.update(wspace=0.2, hspace=0.2) # set the spacing between axes. 
 
 #define metallicity interval
-fmin = -1.9
-fmax = -1.6
+fmin = -1.0
+fmax = -0.7
 
 #Define metallicity ranges
 met = ( (feh_al>fmin) & (feh_al < fmax) & (teff_al< 5000) )
@@ -263,6 +264,8 @@ plt.ylim(-1.0,2.0)
 plt.gca().set_box_aspect(1)
 plt.legend(fontsize = 15, loc='upper right')
 plt.tick_params(direction='in',right=True,top=True,length=10,labelright=True,labelleft=False)
+
+
 
 
 plt.subplot(gs[2])
