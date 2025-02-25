@@ -155,6 +155,7 @@ mask_g = ( (gc_sn >= 50) & (gc_teff > 3000) & (gc_teff < 5000) & \
 #Define dwarf galaxies working sample
 DG = fits.open('DwarfGalaxies.fits')
 
+hdu = DG[1]
 ids_al = DG[1].data['APOGEE_ID_1']
 afield_al = DG[1].data['FIELD']
 teff_al = DG[1].data['TEFF']
@@ -315,3 +316,44 @@ print(afield_al[met&G2])
 
 
 #plt.savefig('train_'+ pt_name[ind] + '.png',format='png',dpi=300,bbox_inches='tight')
+
+#Save newly found G2 stars to G2 catalogue and check if its done correctly
+#define list sizes
+#Table.
+Table.max_lines = 50
+#Table.
+Table.max_width = 100
+
+
+#define the hdu accessed and selected data
+hdu = DG[1]
+from astropy.table import vstack
+selected_data = Table(hdu.data[met&G2])
+hdul = fits.open('DwarfG2s.fits')
+target_data = Table(hdul[1].data)
+hdul.close()
+
+
+#check table before appending
+print('Table Before Appending:')
+hdul = fits.open('DwarfG2s.fits')
+for hdu in hdul:
+    if isinstance(hdu, fits.BinTableHDU):
+        table = Table(hdu.data)
+        print(table)
+        break
+hdul.close()
+
+#stack both data sets and write them to the fits file
+combined_data = vstack([target_data, selected_data])
+combined_data.write('DwarfG2s.fits', overwrite = True)
+
+#check new values have been appended
+print('Table After Appending:')
+hdul = fits.open('DwarfG2s.fits')
+for hdu in hdul:
+    if isinstance(hdu, fits.BinTableHDU):
+        table = Table(hdu.data)
+        print(table)
+        break
+hdul.close()

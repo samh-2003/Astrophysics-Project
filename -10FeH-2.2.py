@@ -313,3 +313,9 @@ print(afield_al[met&G2])
 
 
 #plt.savefig('train_'+ pt_name[ind] + '.png',format='png',dpi=300,bbox_inches='tight')
+
+hdu = DG[1]
+selected_data = hdu.data[met&G2]
+image_hdu = fits.BinTableHDU(data=selected_data, name='G2 stars')
+print(image_hdu)
+image_hdu.writeto('DwarfG2s.fits', overwrite=True)
