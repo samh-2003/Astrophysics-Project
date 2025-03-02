@@ -11,7 +11,6 @@ from astropy.io import fits
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import matplotlib.gridspec as gridspec
-import pylab as plt 
 import numpy as np
 import math
 from scipy import stats
@@ -20,10 +19,6 @@ from pandas import DataFrame
 
 # Get current size
 fig_size = plt.rcParams["figure.figsize"]
-
-# Set figure width to 16 and height to 12
-fig_size[0] = 20
-fig_size[1] = 20
 
 #Figure settings (font sizes of ticks and labels)
 labs=40
@@ -100,112 +95,153 @@ mask_al = ( (asn >= 50) & (ateff > 3500) & (ateff < 5000) & \
         (ac > -10) & (ac < 10) & (aal > -10) & (aal < 10))
 
 #Graphs
-
-gs = gridspec.GridSpec(2,5)
-gs.update()
-#wspace=0.2, hspace=0.1
-
-#Mg against Fe
-plt.subplot(gs[0,0])
-plt.rc('text', usetex=True)
-plt.suptitle(r'$\underline{[Fe/H] against Metallicities}$',y = 0.94, fontsize = 50, usetex = True)
-plt.hist2d(afe[mask_al],amg[mask_al],norm=mpl.colors.LogNorm(), bins=(200, 200), cmap='bone')
-plt.scatter(feh_al, mgfe_al, c='green', alpha=1.0, s=50, label = 'Dwarf Galaxies')
-plt.scatter(feh_g2, mgfe_g2, c='red', alpha=0.9, s=100, label = 'G2s')
-plt.xlabel('[Fe/H]', size=labs)
-plt.xticks(np.arange(-2.5, 1, step=0.5), fontsize=tcks)
-plt.ylabel('[Mg/Fe]', size=labs)
-plt.yticks(np.arange(-0.75, 0.75, step=0.25), fontsize=tcks)
-plt.gca().set_box_aspect(1)
-plt.legend(fontsize = 20, loc='lower right')
-
-#Al against Fe
-plt.subplot(gs[0,1])
-plt.hist2d(afe[mask_al],aal[mask_al],norm=mpl.colors.LogNorm(), bins=(200, 200), cmap='bone')
-plt.scatter(feh_al, alfe_al, c='green', alpha=1.0, s=50, label = 'Dwarf Galaxies')
-plt.scatter(feh_g2, alfe_g2, c='red', alpha=0.9, s=100, label = 'G2s')
-plt.xlabel('[Fe/H]', size=labs)
-plt.xticks(np.arange(-2.5, 1, step=0.5), fontsize=tcks)
-plt.ylabel('[Al/Fe]', size=labs)
-plt.yticks(np.arange(-0.75, 0.75, step=0.25), fontsize=tcks)
-plt.gca().set_box_aspect(1)
-plt.legend(fontsize = 20, loc='lower right')
+fig = plt.figure(figsize=(30, 30))
+fig2 = plt.figure(figsize=(30, 30))
+gs = gridspec.GridSpec(2, 2, figure=fig, wspace=0.4, hspace=0.1)
+gs2 = gridspec.GridSpec(2, 2, figure=fig2, wspace=0.4, hspace=0.1)
 
 
-#Si against Fe
-plt.subplot(gs[0,2])
-plt.hist2d(afe[mask_al],asi[mask_al],norm=mpl.colors.LogNorm(), bins=(200, 200), cmap='bone')
-plt.scatter(feh_al, sife_al, c='green', alpha=1.0, s=50, label = 'Dwarf Galaxies')
-plt.scatter(feh_g2, sife_g2, c='red', alpha=0.9, s=100, label = 'G2s')
-plt.xlabel('[Fe/H]', size=labs)
-plt.xticks(np.arange(-2.5, 1, step=0.5), fontsize=tcks)
-plt.ylabel('[Si/Fe]', size=labs)
-plt.yticks(np.arange(-0.75, 0.75, step=0.25), fontsize=tcks)
-plt.gca().set_box_aspect(1)
-plt.legend(fontsize = 20, loc='lower right')
+# Mg against Fe
+ax1 = fig.add_subplot(gs[0, 0])
+h1 = ax1.hist2d(afe[mask_al], amg[mask_al], norm=mpl.colors.LogNorm(), bins=(200, 200), cmap='bone')
+cb1 = fig.colorbar(h1[3], ax=ax1, fraction=0.046, pad=0.04)
+cb1.set_label('Counts', fontsize=labs)
+cb1.ax.tick_params(labelsize=tcks)
+ax1.scatter(feh_al, mgfe_al, c='green', alpha=1.0, s=50, label='Dwarf Galaxies')
+ax1.scatter(feh_g2, mgfe_g2, c='red', alpha=0.9, s=100, label='G2s')
+ax1.set_xlabel('[Fe/H]', size=labs)
+ax1.set_xticks(np.arange(-2.5, 1, step=0.5))
+ax1.set_xticklabels(np.arange(-2.5, 1, step=0.5), fontsize=tcks)
+ax1.set_ylabel('[Mg/Fe]', size=labs)
+ax1.set_yticks(np.arange(-0.75, 0.75, step=0.25))
+ax1.set_yticklabels(np.arange(-0.75, 0.75, step=0.25), fontsize=tcks)
+ax1.set_box_aspect(1)
+ax1.legend(fontsize=20, loc='lower right')
 
-#Ni against Fe
-plt.subplot(gs[0,3])
-plt.rc('text', usetex=True)
-plt.suptitle(r'$\underline{[Fe/H] against Metallicities}$',y = 0.94, fontsize = 50, usetex = True)
-#plt.hist2d(afe[mask_al],ani[mask_al],norm=mpl.colors.LogNorm(), bins=(200, 200), cmap='bone')
-plt.scatter(feh_al, nife_al, c='green', alpha=1.0, s=50, label = 'Dwarf Galaxies')
-plt.scatter(feh_g2, nife_g2, c='red', alpha=0.9, s=100, label = 'G2s')
-plt.xlabel('[Fe/H]', size=labs)
-plt.xticks(np.arange(-2.5, 1, step=0.5), fontsize=tcks)
-plt.ylabel('[Ni/Fe]', size=labs)
-plt.yticks(np.arange(-0.75, 0.75, step=0.25), fontsize=tcks)
-plt.gca().set_box_aspect(1)
-plt.legend(fontsize = 20, loc='lower right')
+# Al against Fe
+ax2 = fig.add_subplot(gs[0, 1])
+h2 = ax2.hist2d(afe[mask_al], aal[mask_al], norm=mpl.colors.LogNorm(), bins=(200, 200), cmap='bone')
+cb2 = fig.colorbar(h2[3], ax=ax2, fraction=0.046, pad=0.04)
+cb2.set_label('Counts', fontsize=labs)
+cb2.ax.tick_params(labelsize=tcks)
+ax2.scatter(feh_al, alfe_al, c='green', alpha=1.0, s=50, label='Dwarf Galaxies')
+ax2.scatter(feh_g2, alfe_g2, c='red', alpha=0.9, s=100, label='G2s')
+ax2.set_xlabel('[Fe/H]', size=labs)
+ax2.set_xticks(np.arange(-2.5, 1, step=0.5))
+ax2.set_xticklabels(np.arange(-2.5, 1, step=0.5), fontsize=tcks)
+ax2.set_ylabel('[Al/Fe]', size=labs)
+ax2.set_yticks(np.arange(-1, 1, step=0.25))
+ax2.set_yticklabels(np.arange(-1, 1, step=0.25), fontsize=tcks)
+ax2.set_box_aspect(1)
+ax2.legend(fontsize=20, loc='lower right')
 
-#C against Fe
-plt.subplot(gs[1,0])
-#plt.hist2d(afe[mask_al],ac[mask_al],norm=mpl.colors.LogNorm(), bins=(200, 200), cmap='bone')
-plt.scatter(feh_al, cfe_al, c='green', alpha=1.0, s=50, label = 'Dwarf Galaxies')
-plt.scatter(feh_g2, cfe_g2, c='red', alpha=0.9, s=100, label = 'G2s')
-plt.xlabel('[Fe/H]', size=labs)
-plt.xticks(np.arange(-2.5, 1, step=0.5), fontsize=tcks)
-plt.ylabel('[C/Fe]', size=labs)
-plt.yticks(np.arange(-0.75, 0.75, step=0.25), fontsize=tcks)
-plt.gca().set_box_aspect(1)
-plt.legend(fontsize = 20, loc='lower right')
+# Si against Fe
+ax3 = fig.add_subplot(gs[1, 0])
+h3 = ax3.hist2d(afe[mask_al], asi[mask_al], norm=mpl.colors.LogNorm(), bins=(200, 200), cmap='bone')
+cb3 = fig.colorbar(h3[3], ax=ax3, fraction=0.046, pad=0.04)
+cb3.set_label('Counts', fontsize=labs)
+cb3.ax.tick_params(labelsize=tcks)
+ax3.scatter(feh_al, sife_al, c='green', alpha=1.0, s=50, label='Dwarf Galaxies')
+ax3.scatter(feh_g2, sife_g2, c='red', alpha=0.9, s=100, label='G2s')
+ax3.set_xlabel('[Fe/H]', size=labs)
+ax3.set_xticks(np.arange(-2.5, 1, step=0.5))
+ax3.set_xticklabels(np.arange(-2.5, 1, step=0.5), fontsize=tcks)
+ax3.set_ylabel('[Si/Fe]', size=labs)
+ax3.set_yticks(np.arange(-0.75, 0.75, step=0.25))
+ax3.set_yticklabels(np.arange(-0.75, 0.75, step=0.25), fontsize=tcks)
+ax3.set_box_aspect(1)
+ax3.legend(fontsize=20, loc='lower right')
 
-#N against Fe
-plt.subplot(gs[1,1])
-#plt.hist2d(afe[mask_al],an[mask_al],norm=mpl.colors.LogNorm(), bins=(200, 200), cmap='bone')
-plt.scatter(feh_al, nfe_al, c='green', alpha=1.0, s=50, label = 'Dwarf Galaxies')
-plt.scatter(feh_g2, nfe_g2, c='red', alpha=0.9, s=100, label = 'G2s')
-plt.xlabel('[Fe/H]', size=labs)
-plt.xticks(np.arange(-2.5, 1, step=0.5), fontsize=tcks)
-plt.ylabel('[N/Fe]', size=labs)
-plt.yticks(np.arange(-0.75, 0.75, step=0.25), fontsize=tcks)
-plt.gca().set_box_aspect(1)
-plt.legend(fontsize = 20, loc='lower right')
+# Ni against Fe
 
-#Mn against Fe
-plt.subplot(gs[1,2])
-#plt.hist2d(afe[mask_al],amn[mask_al],norm=mpl.colors.LogNorm(), bins=(200, 200), cmap='bone')
-plt.scatter(feh_al, mnfe_al, c='green', alpha=1.0, s=50, label = 'Dwarf Galaxies')
-plt.scatter(feh_g2, mnfe_g2, c='red', alpha=0.9, s=100, label = 'G2s')
-plt.xlabel('[Fe/H]', size=labs)
-plt.xticks(np.arange(-2.5, 1, step=0.5), fontsize=tcks)
-plt.ylabel('[Mn/Fe]', size=labs)
-plt.yticks(np.arange(-0.75, 0.75, step=0.25), fontsize=tcks)
-plt.gca().set_box_aspect(1)
-plt.legend(fontsize = 20, loc='lower right')
+#replace nan values from ani with 0
+ani_clean = np.nan_to_num(ani[mask_al])
+ax4 = fig.add_subplot(gs[1, 1])
+h4 = ax4.hist2d(afe[mask_al], ani_clean, norm=mpl.colors.LogNorm(), bins=(200, 200), cmap='bone')
+cb4 = fig.colorbar(h4[3], ax=ax4, fraction=0.046, pad=0.04)
+cb4.set_label('Counts', fontsize=labs)
+cb4.ax.tick_params(labelsize=tcks)
+ax4.scatter(feh_al, nife_al, c='green', alpha=1.0, s=50, label='Dwarf Galaxies')
+ax4.scatter(feh_g2, nife_g2, c='red', alpha=0.9, s=100, label='G2s')
+ax4.set_xlabel('[Fe/H]', size=labs)
+ax4.set_xticks(np.arange(-2.5, 1, step=0.5))
+ax4.set_xticklabels(np.arange(-2.5, 1, step=0.5), fontsize=tcks)
+ax4.set_ylabel('[Ni/Fe]', size=labs)
+ax4.set_yticks(np.arange(-0.75, 0.75, step=0.25))
+ax4.set_yticklabels(np.arange(-0.75, 0.75, step=0.25), fontsize=tcks)
+ax4.set_box_aspect(1)
+ax4.legend(fontsize=20, loc='lower right')
 
-#Ca against Fe
-plt.subplot(gs[1,3])
-#plt.hist2d(afe[mask_al],aca[mask_al],norm=mpl.colors.LogNorm(), bins=(200, 200), cmap='bone')
-plt.scatter(feh_al, cafe_al, c='green', alpha=1.0, s=50, label = 'Dwarf Galaxies')
-plt.scatter(feh_g2, cafe_g2, c='red', alpha=0.9, s=100, label = 'G2s')
-plt.xlabel('[Fe/H]', size=labs)
-plt.xticks(np.arange(-2.5, 1, step=0.5), fontsize=tcks)
-plt.ylabel('[Ca/Fe]', size=labs)
-plt.yticks(np.arange(-0.75, 0.75, step=0.25), fontsize=tcks)
-plt.gca().set_box_aspect(1)
-plt.legend(fontsize = 20, loc='lower right')
 
-ax = plt.subplot(gs[:,4])
-cb = plt.colorbar(ax)
-cb.ax.tick_params(labelsize=tcks)
+# C against Fe
+ax5 = fig2.add_subplot(gs2[0, 0])
+h5 = ax5.hist2d(afe[mask_al], ac[mask_al], norm=mpl.colors.LogNorm(), bins=(200, 200), cmap='bone')
+cb5 = fig2.colorbar(h5[3], ax=ax5, fraction=0.046, pad=0.04)
+cb5.set_label('Counts', fontsize=labs)
+cb5.ax.tick_params(labelsize=tcks)
+ax5.scatter(feh_al, cfe_al, c='green', alpha=1.0, s=50, label='Dwarf Galaxies')
+ax5.scatter(feh_g2, cfe_g2, c='red', alpha=0.9, s=100, label='G2s')
+ax5.set_xlabel('[Fe/H]', size=labs)
+ax5.set_xticks(np.arange(-2.5, 1, step=0.5))
+ax5.set_xticklabels(np.arange(-2.5, 1, step=0.5), fontsize=tcks)
+ax5.set_ylabel('[C/Fe]', size=labs)
+ax5.set_yticks(np.arange(-1.5, 1, step=0.5))
+ax5.set_yticklabels(np.arange(-1.5, 1, step=0.5), fontsize=tcks)
+ax5.set_box_aspect(1)
+ax5.legend(fontsize=20, loc='lower right')
+
+# N against Fe
+ax6 = fig2.add_subplot(gs2[0, 1])
+h6 = ax6.hist2d(afe[mask_al], an[mask_al], norm=mpl.colors.LogNorm(), bins=(200, 200), cmap='bone')
+cb6 = fig2.colorbar(h6[3], ax=ax6, fraction=0.046, pad=0.04)
+cb6.set_label('Counts', fontsize=labs)
+cb6.ax.tick_params(labelsize=tcks)
+ax6.scatter(feh_al, nfe_al, c='green', alpha=1.0, s=50, label='Dwarf Galaxies')
+ax6.scatter(feh_g2, nfe_g2, c='red', alpha=0.9, s=100, label='G2s')
+ax6.set_xlabel('[Fe/H]', size=labs)
+ax6.set_xticks(np.arange(-2.5, 1, step=0.5))
+ax6.set_xticklabels(np.arange(-2.5, 1, step=0.5), fontsize=tcks)
+ax6.set_ylabel('[N/Fe]', size=labs)
+ax6.set_yticks(np.arange(-0.75, 2, step=0.5))
+ax6.set_yticklabels(np.arange(-0.75, 2, step=0.5), fontsize=tcks)
+ax6.set_box_aspect(1)
+ax6.legend(fontsize=20, loc='lower right')
+
+# Mn against Fe
+ax7 = fig2.add_subplot(gs2[1, 0])
+h7 = ax7.hist2d(afe[mask_al], amn[mask_al], norm=mpl.colors.LogNorm(), bins=(200, 200), cmap='bone')
+cb7 = fig2.colorbar(h7[3], ax=ax7, fraction=0.046, pad=0.04)
+cb7.set_label('Counts', fontsize=labs)
+cb7.ax.tick_params(labelsize=tcks)
+ax7.scatter(feh_al, mnfe_al, c='green', alpha=1.0, s=50, label='Dwarf Galaxies')
+ax7.scatter(feh_g2, mnfe_g2, c='red', alpha=0.9, s=100, label='G2s')
+ax7.set_xlabel('[Fe/H]', size=labs)
+ax7.set_xticks(np.arange(-2.5, 1, step=0.5))
+ax7.set_xticklabels(np.arange(-2.5, 1, step=0.5), fontsize=tcks)
+ax7.set_ylabel('[Mn/Fe]', size=labs)
+ax7.set_yticks(np.arange(-1, 1.5, step=0.5))
+ax7.set_yticklabels(np.arange(-1, 1.5, step=0.5), fontsize=tcks)
+ax7.set_box_aspect(1)
+ax7.legend(fontsize=20, loc='lower right')
+
+# Ca against Fe
+#replace nan values from aca with 0
+aca_clean = np.nan_to_num(aca[mask_al])
+
+ax8 = fig2.add_subplot(gs2[1, 1])
+h8 = ax8.hist2d(afe[mask_al], aca_clean, norm=mpl.colors.LogNorm(), bins=(200, 200), cmap='bone')
+cb8 = fig2.colorbar(h8[3], ax=ax8, fraction=0.046, pad=0.04)
+cb8.set_label('Counts', fontsize=labs)
+cb8.ax.tick_params(labelsize=tcks)
+ax8.scatter(feh_al, cafe_al, c='green', alpha=1.0, s=50, label='Dwarf Galaxies')
+ax8.scatter(feh_g2, cafe_g2, c='red', alpha=0.9, s=100, label='G2s')
+ax8.set_xlabel('[Fe/H]', size=labs)
+ax8.set_xticks(np.arange(-2.5, 1, step=0.5))
+ax8.set_xticklabels(np.arange(-2.5, 1, step=0.5), fontsize=tcks)
+ax8.set_ylabel('[Ca/Fe]', size=labs)
+ax8.set_yticks(np.arange(-0.75, 1, step=0.25))
+ax8.set_yticklabels(np.arange(-0.75, 1, step=0.25), fontsize=tcks)
+ax8.set_box_aspect(1)
+ax8.legend(fontsize=20, loc='lower right')
+
+plt.show()
