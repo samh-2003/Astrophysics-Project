@@ -25,9 +25,7 @@ labs=40
 tcks=35
 
 #Open G2 File
-G2 = fits.open('DwarfG2s.fits')
-
-#G2 = fits.open('DwarfG2snoNaNs.fits')
+G2 = fits.open('NewDwarfG2s.fits')
 
 hdu = G2[1]
 ids_g2 = G2[1].data['APOGEE_ID_1']
@@ -42,6 +40,16 @@ sife_g2 = G2[1].data['Si_Fe']
 alfe_g2 = G2[1].data['Al_Fe']
 mnfe_g2 = G2[1].data['Mn_Fe']
 ofe_g2 = G2[1].data['O_Fe']
+errmgfe_g2 = G2[1].data['Mg_Fe_Err']
+errnfe_g2 = G2[1].data['N_Fe_Err']
+errnife_g2 = G2[1].data['Ni_Fe_Err']
+errfeh_g2 = G2[1].data['Fe_H_Err']
+errcfe_g2 = G2[1].data['C_Fe_Err']
+errcafe_g2 = G2[1].data['CA_Fe_Err']
+errsife_g2 = G2[1].data['Si_Fe_Err']
+erralfe_g2 = G2[1].data['Al_Fe_Err']
+errmnfe_g2 = G2[1].data['Mn_Fe_Err']
+errofe_g2 = G2[1].data['O_Fe_Err']
 
 
 #Open Dwarf galaxy files
@@ -99,61 +107,37 @@ mask_al = ( (asn >= 50) & (ateff > 3500) & (ateff < 5000) & \
         (aLz > -1.e4) & (asflag == 0) & (an < 10) & (an > -10) & \
         (ac > -10) & (ac < 10) & (aal > -10) & (aal < 10))
 
-# Check for NaN values in the G2 sample overall
-#nan_mgfe_g2 = np.isnan(mgfe_g2)
-#nan_alfe_g2 = np.isnan(alfe_g2)
-#nan_nfe_g2 = np.isnan(nfe_g2)
-#nan_nife_g2 = np.isnan(nife_g2)
-#nan_cfe_g2 = np.isnan(cfe_g2)
-#nan_cafe_g2 = np.isnan(cafe_g2)
-#nan_sife_g2 = np.isnan(sife_g2)
-#nan_mnfe_g2 = np.isnan(mnfe_g2)
-#nan_ofe_g2 = np.isnan(ofe_g2)
-#nan_feh_g2 = np.isnan(feh_g2)
+# Function to calculate binned mean of x and y errors
+def bin_mean_errors(x, y, x_err, y_err, x_bins):
+    bin_centers = []
+    bin_x_error_means = []  # Mean of x errors
+    bin_y_error_means = []  # Mean of y errors
+    for i in range(len(x_bins) - 1):
+        mask = (x >= x_bins[i]) & (x < x_bins[i + 1])
+        if np.sum(mask) > 0:
+            bin_center = (x_bins[i] + x_bins[i + 1]) / 2
+            bin_centers.append(bin_center)
+            bin_x_error_means.append(np.mean(x_err[mask]))  # Mean of x errors
+            bin_y_error_means.append(np.mean(y_err[mask]))  # Mean of y errors
+            # Print debug information
+            print(f"Bin {i}: Center = {bin_center}, N = {np.sum(mask)}")
+            print("x errors in bin:", x_err[mask])
+            print("y errors in bin:", y_err[mask])
+            print("Mean x error:", bin_x_error_means[-1])
+            print("Mean y error:", bin_y_error_means[-1])
+            print()
+    return np.array(bin_centers), np.array(bin_x_error_means), np.array(bin_y_error_means)
 
-# Count the number of NaN values
-#num_nan_mgfe_g2 = np.sum(nan_mgfe_g2)
-#num_nan_alfe_g2 = np.sum(nan_alfe_g2)
-#num_nan_nfe_g2 = np.sum(nan_nfe_g2)
-#num_nan_nife_g2 = np.sum(nan_nife_g2)
-#num_nan_cfe_g2 = np.sum(nan_cfe_g2)
-#num_nan_cafe_g2 = np.sum(nan_cafe_g2)
-#num_nan_sife_g2 = np.sum(nan_sife_g2)
-#num_nan_mnfe_g2 = np.sum(nan_mnfe_g2)
-#num_nan_ofe_g2 = np.sum(nan_ofe_g2)
-#num_nan_feh_g2 = np.sum(nan_feh_g2)
-#num_g2 = len(G2[1].data)
-
-# Print the results
-#print(f"Number of NaN values in mgfe_g2: {num_nan_mgfe_g2}")
-#print(f"Number of NaN values in alfe_g2: {num_nan_alfe_g2}")    
-#print(f"Number of NaN values in nfe_g2: {num_nan_nfe_g2}")
-#print(f"Number of NaN values in nife_g2: {num_nan_nife_g2}")
-#print(f"Number of NaN values in cfe_g2: {num_nan_cfe_g2}")
-#print(f"Number of NaN values in cafe_g2: {num_nan_cafe_g2}")
-#print(f"Number of NaN values in sife_g2: {num_nan_sife_g2}")
-#print(f"Number of NaN values in mnfe_g2: {num_nan_mnfe_g2}")
-#print(f"Number of NaN values in ofe_g2: {num_nan_ofe_g2}")
-#print(f"Number of NaN values in feh_g2: {num_nan_feh_g2}")
-#print(f"Number of values in G2 file: {num_g2}")
-
-
-#mask to remove NaN values
-#mask_nan = np.isnan(mgfe_g2) & np.isnan(alfe_g2) & np.isnan(nife_g2) & np.isnan(cafe_g2) & np.isnan(sife_g2) & np.isnan(mgfe_g2)
-
-#apply mask to G2 file to remove NaN values
-#selected_data = hdu.data[mask_nan]
-#image_hdu = fits.BinTableHDU(data=selected_data, name='Dwarf Galaxy Data')
-#print(image_hdu)
-#image_hdu.writeto('DwarfG2snoNaNs.fits', overwrite=True)
+# Define bins
+x_bins = np.arange(-2.5, -0.25, 0.25)
 
 
 #Graphs
 fig = plt.figure(figsize=(30, 30))
 gs = gridspec.GridSpec(3, 3, figure=fig, wspace=0.7, hspace=0.1)
 
-plt.rc('text', usetex=True)
-plt.suptitle(r'$\underline{Metallicities\;against\;iron}$', fontsize = 60, y = 0.875)
+#plt.rc('text', usetex=True)
+#plt.suptitle(r'$\underline{Metallicities\;against\;iron}$', fontsize = 60, y = 0.875)
 
 # Mg against Fe
 ax1 = fig.add_subplot(gs[0, 0])
@@ -161,8 +145,12 @@ h1 = ax1.hist2d(afe[mask_al], amg[mask_al], norm=mpl.colors.LogNorm(), bins=(200
 cb1 = fig.colorbar(h1[3], ax=ax1, fraction=0.046, pad=0.04)
 cb1.set_label('Counts', fontsize=labs)
 cb1.ax.tick_params(labelsize=tcks)
+bin_centers, bin_x_error_means, bin_y_error_means = bin_mean_errors(feh_g2, mgfe_g2, errfeh_g2, errmgfe_g2, x_bins)
+ax1.errorbar(bin_centers, [-0.65] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
+             ls = 'none', color='blue', label='Mean Errors')
 ax1.scatter(feh_al, mgfe_al, c='green', alpha=1.0, s=15, label='Dwarf Galaxies')
 ax1.scatter(feh_g2, mgfe_g2, c='red', alpha=0.9, s=35, label='G2s')
+ax1.errorbar(feh_g2, mgfe_g2, errfeh_g2, errmgfe_g2, ls = 'none', label='Errors')
 ax1.set_xlabel('[Fe/H]', size=labs)
 ax1.set_xticks(np.arange(-2.5, 1, step=0.5))
 ax1.set_xticklabels(np.arange(-2.5, 1, step=0.5), fontsize=tcks, rotation = 45)
@@ -178,6 +166,9 @@ h2 = ax2.hist2d(afe[mask_al], aal[mask_al], norm=mpl.colors.LogNorm(), bins=(200
 cb2 = fig.colorbar(h2[3], ax=ax2, fraction=0.046, pad=0.04)
 cb2.set_label('Counts', fontsize=labs)
 cb2.ax.tick_params(labelsize=tcks)
+bin_centers, bin_x_error_means, bin_y_error_means = bin_mean_errors(feh_g2, alfe_g2, errfeh_g2, erralfe_g2, x_bins)
+ax2.errorbar(bin_centers, [0.75] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
+             ls = 'none', color='blue', label='Mean Errors')
 ax2.scatter(feh_al, alfe_al, c='green', alpha=1.0, s=15, label='Dwarf Galaxies')
 ax2.scatter(feh_g2, alfe_g2, c='red', alpha=0.9, s=35, label='G2s')
 ax2.set_xlabel('[Fe/H]', size=labs)
@@ -195,6 +186,9 @@ h3 = ax3.hist2d(afe[mask_al], asi[mask_al], norm=mpl.colors.LogNorm(), bins=(200
 cb3 = fig.colorbar(h3[3], ax=ax3, fraction=0.046, pad=0.04)
 cb3.set_label('Counts', fontsize=labs)
 cb3.ax.tick_params(labelsize=tcks)
+bin_centers, bin_x_error_means, bin_y_error_means = bin_mean_errors(feh_g2, sife_g2, errfeh_g2, errsife_g2, x_bins)
+ax3.errorbar(bin_centers, [0.6] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
+             ls = 'none', color='blue', label='Mean Errors')
 ax3.scatter(feh_al, sife_al, c='green', alpha=1.0, s=15, label='Dwarf Galaxies')
 ax3.scatter(feh_g2, sife_g2, c='red', alpha=0.9, s=35, label='G2s')
 ax3.set_xlabel('[Fe/H]', size=labs)
@@ -215,6 +209,9 @@ h4 = ax4.hist2d(afe[mask_al], ani_clean, norm=mpl.colors.LogNorm(), bins=(200, 2
 cb4 = fig.colorbar(h4[3], ax=ax4, fraction=0.046, pad=0.04)
 cb4.set_label('Counts', fontsize=labs)
 cb4.ax.tick_params(labelsize=tcks)
+bin_centers, bin_x_error_means, bin_y_error_means = bin_mean_errors(feh_g2, nife_g2, errfeh_g2, errnife_g2, x_bins)
+ax4.errorbar(bin_centers, [-0.75] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
+             ls = 'none', color='blue', label='Mean Errors')
 ax4.scatter(feh_al, nife_al, c='green', alpha=1.0, s=15, label='Dwarf Galaxies')
 ax4.scatter(feh_g2, nife_g2, c='red', alpha=0.9, s=35, label='G2s')
 ax4.set_xlabel('[Fe/H]', size=labs)
@@ -233,8 +230,12 @@ h5 = ax5.hist2d(afe[mask_al], ac[mask_al], norm=mpl.colors.LogNorm(), bins=(200,
 cb5 = fig.colorbar(h5[3], ax=ax5, fraction=0.046, pad=0.04)
 cb5.set_label('Counts', fontsize=labs)
 cb5.ax.tick_params(labelsize=tcks)
+bin_centers, bin_x_error_means, bin_y_error_means = bin_mean_errors(feh_g2, cfe_g2, errfeh_g2, errcfe_g2, x_bins)
+ax5.errorbar(bin_centers, [0.5] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
+             ls = 'none', color='blue', label='Mean Errors')
 ax5.scatter(feh_al, cfe_al, c='green', alpha=1.0, s=15, label='Dwarf Galaxies')
 ax5.scatter(feh_g2, cfe_g2, c='red', alpha=0.9, s=35, label='G2s')
+ax5.errorbar(feh_g2, cfe_g2, errfeh_g2, errcfe_g2, ls = 'none', label='Errors')
 ax5.set_xlabel('[Fe/H]', size=labs)
 ax5.set_xticks(np.arange(-2.5, 1, step=0.5))
 ax5.set_xticklabels(np.arange(-2.5, 1, step=0.5), fontsize=tcks, rotation = 45)
@@ -250,6 +251,9 @@ h6 = ax6.hist2d(afe[mask_al], an[mask_al], norm=mpl.colors.LogNorm(), bins=(200,
 cb6 = fig.colorbar(h6[3], ax=ax6, fraction=0.046, pad=0.04)
 cb6.set_label('Counts', fontsize=labs)
 cb6.ax.tick_params(labelsize=tcks)
+bin_centers, bin_x_error_means, bin_y_error_means = bin_mean_errors(feh_g2, nfe_g2, errfeh_g2, errnfe_g2, x_bins)
+ax6.errorbar(bin_centers, [1.75] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
+             ls = 'none', color='blue', label='Mean Errors')
 ax6.scatter(feh_al, nfe_al, c='green', alpha=1.0, s=15, label='Dwarf Galaxies')
 ax6.scatter(feh_g2, nfe_g2, c='red', alpha=0.9, s=35, label='G2s')
 ax6.set_xlabel('[Fe/H]', size=labs)
@@ -267,6 +271,9 @@ h7 = ax7.hist2d(afe[mask_al], amn[mask_al], norm=mpl.colors.LogNorm(), bins=(200
 cb7 = fig.colorbar(h7[3], ax=ax7, fraction=0.046, pad=0.04)
 cb7.set_label('Counts', fontsize=labs)
 cb7.ax.tick_params(labelsize=tcks)
+bin_centers, bin_x_error_means, bin_y_error_means = bin_mean_errors(feh_g2, mnfe_g2, errfeh_g2, errmnfe_g2, x_bins)
+ax1.errorbar(bin_centers, [1] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
+             ls = 'none', color='blue', label='Mean Errors')
 ax7.scatter(feh_al, mnfe_al, c='green', alpha=1.0, s=15, label='Dwarf Galaxies')
 ax7.scatter(feh_g2, mnfe_g2, c='red', alpha=0.9, s=35, label='G2s')
 ax7.set_xlabel('[Fe/H]', size=labs)
@@ -287,6 +294,9 @@ h8 = ax8.hist2d(afe[mask_al], aca_clean, norm=mpl.colors.LogNorm(), bins=(200, 2
 cb8 = fig.colorbar(h8[3], ax=ax8, fraction=0.046, pad=0.04)
 cb8.set_label('Counts', fontsize=labs)
 cb8.ax.tick_params(labelsize=tcks)
+bin_centers, bin_x_error_means, bin_y_error_means = bin_mean_errors(feh_g2, cafe_g2, errfeh_g2, errcafe_g2, x_bins)
+ax1.errorbar(bin_centers, [0.8] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
+             ls = 'none', color='blue', label='Mean Errors')
 ax8.scatter(feh_al, cafe_al, c='green', alpha=1.0, s=15, label='Dwarf Galaxies')
 ax8.scatter(feh_g2, cafe_g2, c='red', alpha=0.9, s=35, label='G2s')
 ax8.set_xlabel('[Fe/H]', size=labs)
@@ -307,6 +317,9 @@ h9 = ax9.hist2d(afe[mask_al], ao_clean, norm=mpl.colors.LogNorm(), bins=(200, 20
 cb9 = fig.colorbar(h9[3], ax=ax9, fraction=0.046, pad=0.04)
 cb9.set_label('Counts', fontsize=labs)
 cb9.ax.tick_params(labelsize=tcks)
+bin_centers, bin_x_error_means, bin_y_error_means = bin_mean_errors(feh_g2, ofe_g2, errfeh_g2, errofe_g2, x_bins)
+ax1.errorbar(bin_centers, [-0.65] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
+             ls = 'none', color='blue', label='Mean Errors')
 ax9.scatter(feh_al, ofe_al, c='green', alpha=1.0, s=15, label='Dwarf Galaxies')
 ax9.scatter(feh_g2, ofe_g2, c='red', alpha=0.9, s=35, label='G2s')
 ax9.set_xlabel('[Fe/H]', size=labs)
