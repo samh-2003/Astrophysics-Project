@@ -21,8 +21,9 @@ from pandas import DataFrame
 fig_size = plt.rcParams["figure.figsize"]
 
 #Figure settings (font sizes of ticks and labels)
-labs=40
-tcks=35
+labs=30
+tcks=25
+legend=17.5
 
 #Open G2 File
 G2 = fits.open('NewDwarfG2s.fits')
@@ -117,15 +118,10 @@ def bin_mean_errors(x, y, x_err, y_err, x_bins):
         if np.sum(mask) > 0:
             bin_center = (x_bins[i] + x_bins[i + 1]) / 2
             bin_centers.append(bin_center)
-            bin_x_error_means.append(np.mean(x_err[mask]))  # Mean of x errors
-            bin_y_error_means.append(np.mean(y_err[mask]))  # Mean of y errors
-            # Print debug information
-            print(f"Bin {i}: Center = {bin_center}, N = {np.sum(mask)}")
-            print("x errors in bin:", x_err[mask])
-            print("y errors in bin:", y_err[mask])
-            print("Mean x error:", bin_x_error_means[-1])
-            print("Mean y error:", bin_y_error_means[-1])
-            print()
+            bin_x_error_means.append(np.nanmean(x_err[mask]))  # Mean of x errors
+            bin_y_error_means.append(np.nanmean(y_err[mask]))  # Mean of y errors
+    bin_x_error_means = np.array(bin_x_error_means, dtype=float).flatten()
+    bin_y_error_means = np.array(bin_y_error_means, dtype=float).flatten()
     return np.array(bin_centers), np.array(bin_x_error_means), np.array(bin_y_error_means)
 
 # Define bins
@@ -134,10 +130,9 @@ x_bins = np.arange(-2.5, -0.25, 0.25)
 
 #Graphs
 fig = plt.figure(figsize=(30, 30))
-gs = gridspec.GridSpec(3, 3, figure=fig, wspace=0.7, hspace=0.1)
+gs = gridspec.GridSpec(3, 3, figure=fig, wspace=0.375, hspace=0)
 
-#plt.rc('text', usetex=True)
-#plt.suptitle(r'$\underline{Metallicities\;against\;iron}$', fontsize = 60, y = 0.875)
+plt.rc('text', usetex=True)
 
 # Mg against Fe
 ax1 = fig.add_subplot(gs[0, 0])
@@ -150,7 +145,6 @@ ax1.errorbar(bin_centers, [-0.65] * len(bin_centers), xerr=bin_x_error_means, ye
              ls = 'none', color='blue', label='Mean Errors')
 ax1.scatter(feh_al, mgfe_al, c='green', alpha=1.0, s=15, label='Dwarf Galaxies')
 ax1.scatter(feh_g2, mgfe_g2, c='red', alpha=0.9, s=35, label='G2s')
-ax1.errorbar(feh_g2, mgfe_g2, errfeh_g2, errmgfe_g2, ls = 'none', label='Errors')
 ax1.set_xlabel('[Fe/H]', size=labs)
 ax1.set_xticks(np.arange(-2.5, 1, step=0.5))
 ax1.set_xticklabels(np.arange(-2.5, 1, step=0.5), fontsize=tcks, rotation = 45)
@@ -158,7 +152,7 @@ ax1.set_ylabel('[Mg/Fe]', size=labs)
 ax1.set_yticks(np.arange(-0.75, 0.75, step=0.25))
 ax1.set_yticklabels(np.arange(-0.75, 0.75, step=0.25), fontsize=tcks)
 ax1.set_box_aspect(1)
-ax1.legend(fontsize=12.5, loc='lower right')
+ax1.legend(fontsize=legend, loc='lower right')
 
 # Al against Fe
 ax2 = fig.add_subplot(gs[0, 1])
@@ -178,7 +172,7 @@ ax2.set_ylabel('[Al/Fe]', size=labs)
 ax2.set_yticks(np.arange(-1, 1, step=0.25))
 ax2.set_yticklabels(np.arange(-1, 1, step=0.25), fontsize=tcks)
 ax2.set_box_aspect(1)
-ax2.legend(fontsize=12.5, loc='upper right')
+ax2.legend(fontsize=legend, loc='upper right')
 
 # Si against Fe
 ax3 = fig.add_subplot(gs[0, 2])
@@ -198,7 +192,7 @@ ax3.set_ylabel('[Si/Fe]', size=labs)
 ax3.set_yticks(np.arange(-0.75, 0.75, step=0.25))
 ax3.set_yticklabels(np.arange(-0.75, 0.75, step=0.25), fontsize=tcks)
 ax3.set_box_aspect(1)
-ax3.legend(fontsize=12.5, loc='upper right')
+ax3.legend(fontsize=legend, loc='upper right')
 
 # Ni against Fe
 
@@ -221,7 +215,7 @@ ax4.set_ylabel('[Ni/Fe]', size=labs)
 ax4.set_yticks(np.arange(-0.75, 0.75, step=0.25))
 ax4.set_yticklabels(np.arange(-0.75, 0.75, step=0.25), fontsize=tcks)
 ax4.set_box_aspect(1)
-ax4.legend(fontsize=12.5, loc='lower right')
+ax4.legend(fontsize=legend, loc='lower right')
 
 
 # C against Fe
@@ -231,11 +225,10 @@ cb5 = fig.colorbar(h5[3], ax=ax5, fraction=0.046, pad=0.04)
 cb5.set_label('Counts', fontsize=labs)
 cb5.ax.tick_params(labelsize=tcks)
 bin_centers, bin_x_error_means, bin_y_error_means = bin_mean_errors(feh_g2, cfe_g2, errfeh_g2, errcfe_g2, x_bins)
-ax5.errorbar(bin_centers, [0.5] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
+ax5.errorbar(bin_centers, [0.58] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
              ls = 'none', color='blue', label='Mean Errors')
 ax5.scatter(feh_al, cfe_al, c='green', alpha=1.0, s=15, label='Dwarf Galaxies')
 ax5.scatter(feh_g2, cfe_g2, c='red', alpha=0.9, s=35, label='G2s')
-ax5.errorbar(feh_g2, cfe_g2, errfeh_g2, errcfe_g2, ls = 'none', label='Errors')
 ax5.set_xlabel('[Fe/H]', size=labs)
 ax5.set_xticks(np.arange(-2.5, 1, step=0.5))
 ax5.set_xticklabels(np.arange(-2.5, 1, step=0.5), fontsize=tcks, rotation = 45)
@@ -243,7 +236,7 @@ ax5.set_ylabel('[C/Fe]', size=labs)
 ax5.set_yticks(np.arange(-1.5, 1, step=0.5))
 ax5.set_yticklabels(np.arange(-1.5, 1, step=0.5), fontsize=tcks)
 ax5.set_box_aspect(1)
-ax5.legend(fontsize=12.5, loc='lower right')
+ax5.legend(fontsize=legend, loc='lower right')
 
 # N against Fe
 ax6 = fig.add_subplot(gs[1, 2])
@@ -263,7 +256,7 @@ ax6.set_ylabel('[N/Fe]', size=labs)
 ax6.set_yticks(np.arange(-0.75, 2, step=0.5))
 ax6.set_yticklabels(np.arange(-0.75, 2, step=0.5), fontsize=tcks)
 ax6.set_box_aspect(1)
-ax6.legend(fontsize=12.5, loc='upper right')
+ax6.legend(fontsize=legend, loc='upper right')
 
 # Mn against Fe
 ax7 = fig.add_subplot(gs[2, 0])
@@ -272,7 +265,7 @@ cb7 = fig.colorbar(h7[3], ax=ax7, fraction=0.046, pad=0.04)
 cb7.set_label('Counts', fontsize=labs)
 cb7.ax.tick_params(labelsize=tcks)
 bin_centers, bin_x_error_means, bin_y_error_means = bin_mean_errors(feh_g2, mnfe_g2, errfeh_g2, errmnfe_g2, x_bins)
-ax1.errorbar(bin_centers, [1] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
+ax7.errorbar(bin_centers, [1] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
              ls = 'none', color='blue', label='Mean Errors')
 ax7.scatter(feh_al, mnfe_al, c='green', alpha=1.0, s=15, label='Dwarf Galaxies')
 ax7.scatter(feh_g2, mnfe_g2, c='red', alpha=0.9, s=35, label='G2s')
@@ -283,7 +276,7 @@ ax7.set_ylabel('[Mn/Fe]', size=labs)
 ax7.set_yticks(np.arange(-1, 1.5, step=0.5))
 ax7.set_yticklabels(np.arange(-1, 1.5, step=0.5), fontsize=tcks)
 ax7.set_box_aspect(1)
-ax7.legend(fontsize=12.5, loc='upper right')
+ax7.legend(fontsize=legend, loc='upper right')
 
 # Ca against Fe
 #replace nan values from aca with 0
@@ -295,7 +288,7 @@ cb8 = fig.colorbar(h8[3], ax=ax8, fraction=0.046, pad=0.04)
 cb8.set_label('Counts', fontsize=labs)
 cb8.ax.tick_params(labelsize=tcks)
 bin_centers, bin_x_error_means, bin_y_error_means = bin_mean_errors(feh_g2, cafe_g2, errfeh_g2, errcafe_g2, x_bins)
-ax1.errorbar(bin_centers, [0.8] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
+ax8.errorbar(bin_centers, [0.8] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
              ls = 'none', color='blue', label='Mean Errors')
 ax8.scatter(feh_al, cafe_al, c='green', alpha=1.0, s=15, label='Dwarf Galaxies')
 ax8.scatter(feh_g2, cafe_g2, c='red', alpha=0.9, s=35, label='G2s')
@@ -306,7 +299,7 @@ ax8.set_ylabel('[Ca/Fe]', size=labs)
 ax8.set_yticks(np.arange(-0.75, 1, step=0.25))
 ax8.set_yticklabels(np.arange(-0.75, 1, step=0.25), fontsize=tcks)
 ax8.set_box_aspect(1)
-ax8.legend(fontsize=12.5, loc='upper right')
+ax8.legend(fontsize=legend, loc='upper right')
 
 # O against Fe
 #replace nan values from aca with 0
@@ -318,7 +311,7 @@ cb9 = fig.colorbar(h9[3], ax=ax9, fraction=0.046, pad=0.04)
 cb9.set_label('Counts', fontsize=labs)
 cb9.ax.tick_params(labelsize=tcks)
 bin_centers, bin_x_error_means, bin_y_error_means = bin_mean_errors(feh_g2, ofe_g2, errfeh_g2, errofe_g2, x_bins)
-ax1.errorbar(bin_centers, [-0.65] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
+ax9.errorbar(bin_centers, [-0.65] * len(bin_centers), xerr=bin_x_error_means, yerr=bin_y_error_means, 
              ls = 'none', color='blue', label='Mean Errors')
 ax9.scatter(feh_al, ofe_al, c='green', alpha=1.0, s=15, label='Dwarf Galaxies')
 ax9.scatter(feh_g2, ofe_g2, c='red', alpha=0.9, s=35, label='G2s')
@@ -329,6 +322,7 @@ ax9.set_ylabel('[O/Fe]', size=labs)
 ax9.set_yticks(np.arange(-1, 1.5, step=0.5))
 ax9.set_yticklabels(np.arange(-1, 1.5, step=0.5), fontsize=tcks)
 ax9.set_box_aspect(1)
-ax9.legend(fontsize=12.5, loc='lower right')
+ax9.legend(fontsize=legend, loc='lower right')
 
+plt.savefig('G2Graphs', bbox_inches='tight')
 plt.show()

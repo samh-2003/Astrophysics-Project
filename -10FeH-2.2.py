@@ -222,7 +222,6 @@ gc_met = ( (gc_feh>fmin) & (gc_feh < fmax) & (gc_teff < 5000) )
 
 plt.subplot(gs[0])
 plt.rc('text', usetex=True)
-plt.suptitle(r'$\underline{-2.2 > [Fe/H] > -10.0}$',y = 0.94, fontsize = 50, usetex = True)
 plt.scatter(gc_cfe[gc_met&mask_nan&mask_g],gc_nfe[gc_met&mask_nan&mask_g],c='k',s=30,alpha=0.7, label = 'GC VAC')
 #plt.scatter(cfe_al[met&G3],nfe_al[met&G3],c='blue',s=60)
 plt.scatter(gc_cfe[gc_met&mask_nan&mask_g&gc_G2],gc_nfe[gc_met&mask_nan&mask_g&gc_G2],c='r',alpha=0.7,s=60, label = 'GC VAC G2', marker = 'x')
@@ -295,7 +294,7 @@ plt.scatter(gc_mgfe[gc_met&mask_nan&mask_g],gc_nfe[gc_met&mask_nan&mask_g],c='k'
 #plt.scatter(mgfe_al[met&G3],alfe_al[met&G3],c='blue',s=60)
 plt.scatter(gc_mgfe[gc_met&mask_nan&mask_g&gc_G2],gc_nfe[gc_met&mask_nan&mask_g&gc_G2],c='r',alpha=0.7,s=60, label = 'GC VAC G2', marker = 'x')
 #plt.scatter(gc_mgfe,gc_alfe,c='k',alpha=1,s=15)
-plt.scatter(mgfe_al[met&G2],cfe_al[met&G2],c='g',s=60, label = 'Dwarf Galaxy G2')
+plt.scatter(mgfe_al[met&G2],nfe_al[met&G2],c='g',s=60, label = 'Dwarf Galaxy G2')
 plt.xticks((np.arange(-4,4,step=0.2)),fontsize=tcks)
 plt.yticks((np.arange(-4,4,step=0.5)),fontsize=tcks)
 plt.ylabel('[N/Fe]',size=labs,labelpad=25)
@@ -307,15 +306,15 @@ plt.legend(fontsize = 15, loc='upper right')
 plt.tick_params(direction='in',right=True,top=True,length=10,labelright=True,labelleft=False)
 
 
-
+plt.savefig('-10-2.2.png', bbox_inches='tight')
 print(afield_al[met&G2])
 #print(afield_al[met])
 
 
 #plt.savefig('train_'+ pt_name[ind] + '.png',format='png',dpi=300,bbox_inches='tight')
 
-hdu = DG[1]
-selected_data = hdu.data[met&G2]
-image_hdu = fits.BinTableHDU(data=selected_data, name='G2 stars')
-print(image_hdu)
-image_hdu.writeto('DwarfG2s.fits', overwrite=True)
+#hdu = DG[1]
+#selected_data = hdu.data[met&G2]
+#image_hdu = fits.BinTableHDU(data=selected_data, name='G2 stars')
+#print(image_hdu)
+#image_hdu.writeto('DwarfG2s.fits', overwrite=True)

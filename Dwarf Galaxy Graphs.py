@@ -99,6 +99,7 @@ Ursa_Minor = (field=='URMINOR')
 
 fig = plt.figure(figsize=(30, 30))
 gs = gridspec.GridSpec(2, 2, figure=fig, wspace=0.4, hspace = 0.05)
+plt.rc('text', usetex=True)
 
 #Nitrogen Against Iron
 
@@ -189,5 +190,5 @@ ax4.set_yticklabels(np.arange(-1.5, 1.5, step=0.5), fontsize=tcks)
 ax4.set_box_aspect(1)
 ax4.legend(fontsize = 20, loc='lower right')
 
-
+plt.savefig('AbundanceGraph', bbox_inches='tight')
 plt.show()

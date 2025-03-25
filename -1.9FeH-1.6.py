@@ -227,7 +227,6 @@ gc_met = ( (gc_feh>fmin) & (gc_feh < fmax) & (gc_teff < 5000) )
 
 plt.subplot(gs[0])
 plt.rc('text', usetex=True)
-plt.suptitle(r'$\underline{-1.6 > [Fe/H] > -1.9}$',y = 0.94, fontsize = 50, usetex = True)
 plt.scatter(gc_cfe[gc_met&mask_nan&mask_g],gc_nfe[gc_met&mask_nan&mask_g],c='k',s=30,alpha=0.7, label = 'GC VAC')
 #plt.scatter(cfe_al[met&G3],nfe_al[met&G3],c='blue',s=60)
 plt.scatter(gc_cfe[gc_met&mask_nan&mask_g&gc_G2],gc_nfe[gc_met&mask_nan&mask_g&gc_G2],c='r',alpha=0.7,s=60, label = 'GC VAC G2', marker = 'x')
@@ -295,7 +294,7 @@ plt.scatter(gc_mgfe[gc_met&mask_nan&mask_g],gc_nfe[gc_met&mask_nan&mask_g],c='k'
 #plt.scatter(mgfe_al[met&G3],alfe_al[met&G3],c='blue',s=60)
 plt.scatter(gc_mgfe[gc_met&mask_nan&mask_g&gc_G2],gc_nfe[gc_met&mask_nan&mask_g&gc_G2],c='r',alpha=0.7,s=60, label = 'GC VAC G2', marker = 'x')
 #plt.scatter(gc_mgfe,gc_alfe,c='k',alpha=1,s=15)
-plt.scatter(mgfe_al[met&G2],cfe_al[met&G2],c='g',s=60, label = 'Dwarf Galaxy G2')
+plt.scatter(mgfe_al[met&G2],nfe_al[met&G2],c='g',s=60, label = 'Dwarf Galaxy G2')
 plt.xticks((np.arange(-4,4,step=0.2)),fontsize=tcks)
 plt.yticks((np.arange(-4,4,step=0.5)),fontsize=tcks)
 plt.ylabel('[N/Fe]',size=labs,labelpad=25)
@@ -306,7 +305,7 @@ plt.gca().set_box_aspect(1)
 plt.legend(fontsize = 15, loc='upper right')
 plt.tick_params(direction='in',right=True,top=True,length=10,labelright=True,labelleft=False)
 
-
+plt.savefig('-1.9-1.6.png', bbox_inches='tight')
 print(afield_al[met&G2])
 #print(afield_al[met])
 
@@ -314,40 +313,40 @@ print(afield_al[met&G2])
 #Save newly found G2 stars to G2 catalogue and check if its done correctly
 #define list sizes
 #Table.
-Table.max_lines = 50
+#Table.max_lines = 50
 #Table.
-Table.max_width = 100
+#Table.max_width = 100
 
 
 #define the hdu accessed and selected data
-hdu = DG[1]
-from astropy.table import vstack
-selected_data = Table(hdu.data[met&G2])
-hdul = fits.open('DwarfG2s.fits')
-target_data = Table(hdul[1].data)
-hdul.close()
+#hdu = DG[1]
+#from astropy.table import vstack
+#selected_data = Table(hdu.data[met&G2])
+#hdul = fits.open('DwarfG2s.fits')
+#target_data = Table(hdul[1].data)
+#hdul.close()
 
 
 #check table before appending
-print('Table Before Appending:')
-hdul = fits.open('DwarfG2s.fits')
-for hdu in hdul:
-    if isinstance(hdu, fits.BinTableHDU):
-        table = Table(hdu.data)
-        print(table)
-        break
-hdul.close()
+#print('Table Before Appending:')
+#hdul = fits.open('DwarfG2s.fits')
+#for hdu in hdul:
+#    if isinstance(hdu, fits.BinTableHDU):
+#        table = Table(hdu.data)
+#        print(table)
+#        break
+#hdul.close()
 
 #stack both data sets and write them to the fits file
-combined_data = vstack([target_data, selected_data])
-combined_data.write('DwarfG2s.fits', overwrite = True)
+#combined_data = vstack([target_data, selected_data])
+#combined_data.write('DwarfG2s.fits', overwrite = True)
 
 #check new values have been appended
-print('Table After Appending:')
-hdul = fits.open('DwarfG2s.fits')
-for hdu in hdul:
-    if isinstance(hdu, fits.BinTableHDU):
-        table = Table(hdu.data)
-        print(table)
-        break
-hdul.close()
+#print('Table After Appending:')
+#hdul = fits.open('DwarfG2s.fits')
+#for hdu in hdul:
+#    if isinstance(hdu, fits.BinTableHDU):
+#        table = Table(hdu.data)
+#        print(table)
+#        break
+#hdul.close()
