@@ -199,7 +199,7 @@ fig_size[1] = 20
 
 #Figure settings (font sizes of ticks and labels)
 labs=35
-tcks=30
+tcks=25
 
 #Definition of G2 stars 
 a_n = -0.5
@@ -231,7 +231,7 @@ plt.scatter(gc_cfe[gc_met&mask_nan&mask_g],gc_nfe[gc_met&mask_nan&mask_g],c='k',
 #plt.scatter(cfe_al[met&G3],nfe_al[met&G3],c='blue',s=60)
 plt.scatter(gc_cfe[gc_met&mask_nan&mask_g&gc_G2],gc_nfe[gc_met&mask_nan&mask_g&gc_G2],c='r',alpha=0.7,s=60, label = 'GC VAC G2', marker = 'x')
 #plt.scatter(gc_cfe,gc_nfe,c='k',alpha=1,s=15)
-plt.scatter(cfe_al[met&G2],nfe_al[met&G2],c='g',s=60, label = 'Dwarf Galaxy G2')
+plt.scatter(cfe_al[met&G2],nfe_al[met&G2],c='dodgerblue',s=150, label = 'Dwarf Galaxy G2')
 plt.xticks((np.arange(-1.5,1.5,step=0.5)),fontsize=tcks)
 plt.yticks((np.arange(-1,2.5,step=0.5)),fontsize=tcks)
 plt.ylabel('[N/Fe]',size=labs,labelpad=25)
@@ -240,7 +240,7 @@ plt.xlim(-1.5,0.8)
 plt.ylim(-0.8,2.3)
 plt.gca().set_box_aspect(1)
 #plt.text(-1.2,-0.65,'Intermediate [Fe/H]',fontsize=25)
-plt.legend(fontsize = 15, loc='upper right')
+plt.legend(fontsize = tcks, loc='upper right')
 plt.tick_params(direction='in',right=True,top=True,length=10)
 #plt.plot([-1.5, -1.2],[0, 0.6], c='blue')
 
@@ -254,7 +254,7 @@ plt.scatter(gc_mgfe[gc_met&mask_nan&mask_g],gc_alfe[gc_met&mask_nan&mask_g],c='k
 #plt.scatter(mgfe_al[met&G3],alfe_al[met&G3],c='blue',s=60)
 plt.scatter(gc_mgfe[gc_met&mask_nan&mask_g&gc_G2],gc_alfe[gc_met&mask_nan&mask_g&gc_G2],c='r',alpha=0.7,s=60, label = 'GC VAC G2', marker = 'x')
 #plt.scatter(gc_mgfe,gc_alfe,c='k',alpha=1,s=15)
-plt.scatter(mgfe_al[met&G2],alfe_al[met&G2],c='g',s=60, label = 'Dwarf Galaxy G2')
+plt.scatter(mgfe_al[met&G2],alfe_al[met&G2],c='dodgerblue',s=150, label = 'Dwarf Galaxy G2')
 plt.xticks((np.arange(-4,4,step=0.2)),fontsize=tcks)
 plt.yticks((np.arange(-4,4,step=0.5)),fontsize=tcks)
 plt.ylabel('[Al/Fe]',size=labs,labelpad=25)
@@ -262,7 +262,7 @@ plt.xlabel('[Mg/Fe]',size=labs,labelpad=25)
 plt.xlim(-0.5,0.7)
 plt.ylim(-1.0,2.0)
 plt.gca().set_box_aspect(1)
-plt.legend(fontsize = 15, loc='upper right')
+plt.legend(fontsize = tcks, loc='upper right')
 plt.tick_params(direction='in',right=True,top=True,length=10,labelright=True,labelleft=False)
 
 
@@ -271,7 +271,7 @@ plt.scatter(gc_alfe[gc_met&mask_nan&mask_g],gc_nfe[gc_met&mask_nan&mask_g],c='k'
 #plt.scatter(cfe_al[met&G3],nfe_al[met&G3],c='blue',s=60)
 plt.scatter(gc_alfe[gc_met&mask_nan&mask_g&gc_G2],gc_nfe[gc_met&mask_nan&mask_g&gc_G2],c='r',alpha=0.7,s=60, label = 'GC VAC G2', marker = 'x')
 #plt.scatter(gc_cfe,gc_nfe,c='k',alpha=1,s=15)
-plt.scatter(alfe_al[met&G2],nfe_al[met&G2],c='g',s=60, label = 'Dwarf Galaxy G2')
+plt.scatter(alfe_al[met&G2],nfe_al[met&G2],c='dodgerblue',s=150, label = 'Dwarf Galaxy G2')
 plt.xticks((np.arange(-1.5,1.5,step=0.5)),fontsize=tcks)
 plt.yticks((np.arange(-1,2.5,step=0.5)),fontsize=tcks)
 plt.ylabel('[N/Fe]',size=labs,labelpad=25)
@@ -280,7 +280,7 @@ plt.xlim(-1.5,0.8)
 plt.ylim(-0.8,2.3)
 plt.gca().set_box_aspect(1)
 #plt.text(-1.2,-0.65,'Intermediate [Fe/H]',fontsize=25)
-plt.legend(fontsize = 15, loc='upper right')
+plt.legend(fontsize = tcks, loc='upper right')
 plt.tick_params(direction='in',right=True,top=True,length=10)
 
 
@@ -294,7 +294,7 @@ plt.scatter(gc_mgfe[gc_met&mask_nan&mask_g],gc_nfe[gc_met&mask_nan&mask_g],c='k'
 #plt.scatter(mgfe_al[met&G3],alfe_al[met&G3],c='blue',s=60)
 plt.scatter(gc_mgfe[gc_met&mask_nan&mask_g&gc_G2],gc_nfe[gc_met&mask_nan&mask_g&gc_G2],c='r',alpha=0.7,s=60, label = 'GC VAC G2', marker = 'x')
 #plt.scatter(gc_mgfe,gc_alfe,c='k',alpha=1,s=15)
-plt.scatter(mgfe_al[met&G2],nfe_al[met&G2],c='g',s=60, label = 'Dwarf Galaxy G2')
+plt.scatter(mgfe_al[met&G2],nfe_al[met&G2],c='dodgerblue',s=150, label = 'Dwarf Galaxy G2')
 plt.xticks((np.arange(-4,4,step=0.2)),fontsize=tcks)
 plt.yticks((np.arange(-4,4,step=0.5)),fontsize=tcks)
 plt.ylabel('[N/Fe]',size=labs,labelpad=25)
@@ -302,7 +302,7 @@ plt.xlabel('[Mg/Fe]',size=labs,labelpad=25)
 plt.xlim(-0.5,0.7)
 plt.ylim(-1.0,2.0)
 plt.gca().set_box_aspect(1)
-plt.legend(fontsize = 15, loc='upper right')
+plt.legend(fontsize = tcks, loc='lower left')
 plt.tick_params(direction='in',right=True,top=True,length=10,labelright=True,labelleft=False)
 
 plt.savefig('-1.9-1.6.png', bbox_inches='tight')

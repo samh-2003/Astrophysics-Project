@@ -46,11 +46,13 @@ alfe_gc = gc[1].data['Al_Fe']
 
 #import bad carbon stars
 BC = fits.open('BadCarbon.fits')
+
+ids_bc = BC[1].data['APOGEE_ID_1']
 mgfe_bc = BC[1].data['Mg_Fe']
 nfe_bc = BC[1].data['N_Fe']
 cfe_bc = BC[1].data['C_Fe']
 alfe_bc = BC[1].data['Al_Fe']
-
+print(len(mgfe_bc))
 # Check for NaN values in mgfe_bc and alfe_bc
 nan_mgfe_bc = np.isnan(mgfe_bc)
 nan_alfe_bc = np.isnan(alfe_bc)
@@ -74,6 +76,30 @@ num_nan_alfe_g2 = np.sum(nan_alfe_g2)
 # Print the results
 print(f"Number of NaN values in mgfe_g2: {num_nan_mgfe_g2}")
 print(f"Number of NaN values in alfe_g2: {num_nan_alfe_g2}")
+
+#remove bad carbon points
+# Create a mask for rows to keep (where G2 ID is NOT in BC IDs)
+keep_mask = ~np.isin(ids_g2, ids_bc)
+
+# Apply the mask to filter the G2 data
+filtered_data = G2[1].data[keep_mask]
+
+# Create a new HDU with the filtered data
+new_hdu = fits.BinTableHDU(filtered_data)
+
+# Create a new HDU list with primary header and filtered data
+new_hdul = fits.HDUList([G2[0], new_hdu])  # Preserve primary header from original
+
+# Save to new file
+new_hdul.writeto('NewDwarfG2s.fits', overwrite=True)
+
+# Print summary
+original_count = len(G2[1].data)
+filtered_count = len(filtered_data)
+removed_count = original_count - filtered_count
+print(f"Original rows: {original_count}")
+print(f"Rows removed: {removed_count}")
+print(f"Final rows: {filtered_count}")
 
 
 #Graphs
